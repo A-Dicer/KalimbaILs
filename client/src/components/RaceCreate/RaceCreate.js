@@ -138,15 +138,48 @@ class RaceCreate extends Component {
 //handle form submit -----------------------------------------------------------------
   handleFormSubmit = event => {
     event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
-      })
-        .then(res => this.loadBooks())
-        .catch(err => console.log(err));
+    console.log('started')
+    let filtered = this.state.filter;
+    let time = true;
+    let random
+    let levels = [];
+
+    //select 3 random levels for the race...
+    //we need 3 levels
+    for(let i = 0; i < 3; i++){
+      //if more than three levels are available get random number
+      console.log(filtered)
+
+      filtered.length 
+      ? (  
+        random = Math.floor((Math.random() * filtered.length)),
+        //push level id into array
+        levels.push(filtered[random]._id),
+        //filter out the level just picked
+        filtered= filtered.filter(param => param['_id'] !== filtered[random]._id)
+      )  
+        : console.log('not enough levels to pick from')  
     }
+    //make sure to much time hassn't passed since time select
+    moment().isBefore(moment(this.state.time))
+    ? console.log("the time is still good")
+    : (time = false, console.log("The time is bad now"))
+
+    if ((levels.length === 3) && time) {
+      API.saveRace({
+        category: {
+          difficulty: this.state.difficulty,
+          location: this.state.location,
+          boss: this.state.boss,
+          startTime: this.state.time
+        },
+        levels: levels,
+        messages: [],
+        raceInfo: []
+      })
+        .then((res => this.loadLevels()), console.log('created race')) 
+        .catch(err => console.log(err));
+    } else console.log("did not create race")
   };
 
 render() {
@@ -208,7 +241,7 @@ render() {
           </div>
           <hr />
           <div id="levelAmount">
-          <button type="submit" className="btn btn-secondary btn-sm float-right"  disabled={!(this.state.author && this.state.title)}
+          <button type="submit" className="btn btn-secondary btn-sm float-right"  disabled={!((this.state.difficulty || this.state.location) && this.state.time)}
                   onClick={this.handleFormSubmit}>Create Race</button>
           <Icon id="fa fa-cogs" /> Selecting from {this.state.filter.length} Levels
           </div>        
