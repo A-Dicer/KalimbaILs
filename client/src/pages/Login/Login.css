@@ -1,0 +1,22 @@
+body {
+    
+}
+
+#outer {
+    height: 100vh;
+    color: rgb(7, 132, 154);
+}
+
+#inner {
+    width: 350px; 
+    height: 500px; 
+    margin: auto;
+}
+
+#button {
+    border: solid #fff 4px
+}
+
+#tLogo {
+    width: 15%; padding-right: 10px;
+}

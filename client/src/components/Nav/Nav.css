@@ -1,0 +1,47 @@
+nav {
+    height: 50px;
+    padding: 0; 
+    margin: 20px 0; 
+    border-bottom: solid #fff 4px;  
+    border-top: solid #fff 4px; 
+    background-image: url('kaliTile.jpg'); 
+    background-position: 0 -91px; 
+    box-shadow: 2px 2px 6px 0px #737373
+}
+
+#brandLogo {
+    margin: 0; 
+    padding: 0; 
+    width: 100px; 
+    position: absolute; 
+    left: 0; 
+    top: -29px;
+}
+
+#userRow {
+    width:237px;  
+    padding: 0; 
+    margin: 0;
+}
+
+#signOut {
+    border: solid #fff 2px;
+    margin: 4px;
+    width: 25px;
+    padding: 0;
+    padding-left: 3px;
+}
+
+#raceStatus {
+    font-size: 13px;
+}
+
+#userName {
+    height: 19px;
+}
+
+#userImg {
+    height: 42px;
+    border-left: solid #fff 2px; 
+    border-right: solid #fff 2px
+}
