@@ -33,6 +33,9 @@ export default {
 
   twitchCallback: function(){
     return axios.get("/api/auth/twitch/callback")
-  }
+  },
 
+  logout: function() {
+    return axios.get("/api/auth/logout");
+  },
 };

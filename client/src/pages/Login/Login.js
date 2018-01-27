@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import API from "../../utils/API";
 import "./Login.css";
 import twitchLogo from "./twitchLogo.png";
 import kaliLogo from "./kaliLogo.jpg";
@@ -10,6 +11,10 @@ class Login extends Component {
     currentUser: ""
   };
 
+  componentWillMount() {
+    API.logout()
+      .catch(err => console.log(err))
+  }
   // handleInputChange = event => {
   //   const { name, value } = event.target;
   //   this.setState({

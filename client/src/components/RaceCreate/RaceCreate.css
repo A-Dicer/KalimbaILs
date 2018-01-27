@@ -43,6 +43,10 @@ hr {
     padding: 0;
 }
 
-#levelAmount{
+#levelAmount {
+   
+    position: relative;
+    width: 190px;
+    top: 5px;
     font-size: 14px;
 }

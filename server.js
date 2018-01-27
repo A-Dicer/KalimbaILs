@@ -4,7 +4,7 @@ const cookieParser   = require("cookie-parser");
 const cookieSession  = require("cookie-session");
 const passport       = require("passport");
 const twitchStrategy = require("passport-twitch").Strategy;
-const configAuth = require('./config/auth.js');
+const configAuth = require('./config/twitchAuth.js');
 const mongoose = require("mongoose");
 const io = require('socket.io')();
 

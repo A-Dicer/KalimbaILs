@@ -8,7 +8,9 @@ import "./RaceCreate.css";
 
 //set state and load component -------------------------------------------------------
 class RaceCreate extends Component {
-  state = {
+  constructor(props) {
+  super(props);
+  this.state = {
     levels: [],
     filter: [],
     time: '',
@@ -16,7 +18,7 @@ class RaceCreate extends Component {
     location: '',
     boss: '',
     locArr: []
-  };
+  }}
 
 //component did mount ----------------------------------------------------------------
   componentDidMount() {
@@ -165,6 +167,7 @@ class RaceCreate extends Component {
     ? console.log("the time is still good")
     : (time = false, console.log("The time is bad now"))
 
+    //update server
     if ((levels.length === 3) && time) {
       API.saveRace({
         category: {
@@ -177,11 +180,12 @@ class RaceCreate extends Component {
         messages: [],
         raceInfo: []
       })
-        .then((res => this.loadLevels()), console.log('created race')) 
+        .then((res => this.props.test()), console.log('created race')) 
         .catch(err => console.log(err));
     } else console.log("did not create race")
   };
-
+   
+// render -------------------------------------------------------------------------------------
 render() {
   return (
     <div className="row" id="rightRow">
@@ -240,10 +244,11 @@ render() {
             </div>
           </div>
           <hr />
-          <div id="levelAmount">
+          <div>
+            {console.log(this.props)}
           <button type="submit" className="btn btn-secondary btn-sm float-right"  disabled={!((this.state.difficulty || this.state.location) && this.state.time)}
-                  onClick={this.handleFormSubmit}>Create Race</button>
-          <Icon id="fa fa-cogs" /> Selecting from {this.state.filter.length} Levels
+                  onClick={ this.handleFormSubmit}>Create Race</button>
+          <p id="levelAmount"><Icon id="fa fa-cogs" /> Selecting from {this.state.filter.length} Levels</p>
           </div>        
         </form>   
       </div>                                                        
