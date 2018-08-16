@@ -14,6 +14,7 @@ export class TimeSelect extends Component {
         if(info === "minute") { amount = 60; i = 0; format = 'mm' }
         for( i; i < amount; i++){
             let div = document.getElementById(info);
+            // eslint-disable-next-line
             if(i == moment().format(format)) div.innerHTML += '<option selected>' + this.timeConvert(i, info) + '</option>'
             else div.innerHTML += '<option>' + this.timeConvert(i, info) + '</option>';
         }

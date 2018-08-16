@@ -1,0 +1,49 @@
+#racesRow {
+    margin: 5px 6px 5px; 
+    width: 100%;
+    background: #fff; 
+    border-radius: 5px; 
+}
+#createBtn { 
+    cursor: pointer;
+}
+
+/* #racesCol {
+    padding: 0;
+} */
+
+hr {
+    margin: 2px 0 10px
+}
+
+.raceBtns {
+    padding: 0px;
+}
+
+.raceBtn {
+    
+    
+}
+
+.btn-xs {
+    box-shadow: 1px 1px 1px 0px #737373;
+    margin-bottom: 5px;
+    padding: 0;
+}
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 800ms ease-in;
+}

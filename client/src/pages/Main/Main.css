@@ -3,6 +3,14 @@ body {
    height: 100vh;
 }
 
+#leftRow {
+    margin: 5px; 
+    background: #fff; 
+    border: solid #ccc 1px; 
+    border-radius: 5px; 
+    box-shadow: 1px 1px 1px 0px #737373
+}
+
 #behindNav {
     width: 100%; 
     height: 50px; 
@@ -15,3 +23,22 @@ body {
 #mainRow {
     margin-top: 80px
 }
+
+#rightRow {
+    padding-top: 5px;
+    transition-property: opacity;
+    transition-duration: 500ms;
+    transition-timing-function: linear;
+}
+
+#rightBot{
+    opacity: 1;
+    width: 100%;
+    overflow: hidden;
+    transition-property: opacity;
+    transition-duration: 1000ms;
+    transition-timing-function: linear;
+    /* transition-delay: 1s; */
+}
+
+

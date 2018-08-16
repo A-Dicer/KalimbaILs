@@ -6,7 +6,7 @@ class RaceTimer extends Component {
       super(props);
       this.state = { 
         raceTime: '', 
-        startTime: 3661000 , 
+        startTime: '', 
     }}
   
      timeConvert(time){
@@ -29,14 +29,14 @@ class RaceTimer extends Component {
     tick() {
       //check to see if race start time has passed
       moment().isSameOrAfter(this.state.raceTime)
-      //true: cear interval 
+      //true: clear interval 
       ? clearInterval(this.interval)
       //false: update current time  
       : this.setState({ startTime: Math.abs(moment().diff(this.state.raceTime).valueOf()) })
     }
     
     componentDidMount() {
-      this.setState({raceTime: new moment('Jan 24 2018 22:00:00 GMT-0500')})
+      this.setState({raceTime: new moment(this.props.time)})
       // this.tick()
       this.interval = setInterval(() => this.tick(), 1000);
     }

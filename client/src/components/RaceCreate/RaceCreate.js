@@ -3,8 +3,9 @@ import API from "../../utils/API";
 import moment from "moment";
 import { TimeSelect, Radio, Checkbox } from "../../components/Form";
 import Icon from "../../components/Icon";
-import hoebear from "./hoebearHead.png";
 import "./RaceCreate.css";
+const io = require('socket.io-client')  
+const socket = io() 
 
 //set state and load component -------------------------------------------------------
 class RaceCreate extends Component {
@@ -49,33 +50,42 @@ class RaceCreate extends Component {
             if(items.selection === "Medium")  items.selection = 2
             if(items.selection === "Hard")  items.selection = 4
             if(items.selection === "Very Hard")  items.selection = 8
-        filtered =  filtered.filter(param => param['rank'] <= items.selection)    
-        } else console.log("No difficulty filter")
+            filtered =  filtered.filter(param => param['rank'] <= items.selection)    
+        } 
       }
 
       //location ---------------------------------   
       if(items.option === "location"){
-        items.selection.length
-          ? ( 
-            items.selection.forEach(loc =>{   
-              filtered.forEach(level =>{
-                if(loc === level.location) diff.push(level)
-              })
-            }),
-            filtered = diff
-          ) : console.log("no location filter")     
+        if(items.selection.length){
+         // eslint-disable-next-line
+          items.selection.forEach(loc =>{   
+            filtered.forEach(level =>{
+              if(loc === level.location) diff.push(level)
+            })
+          })
+          filtered = diff
+        }     
       }
 
       // boss ------------------------------------
       if(items.option === "type"){
-        items.selection
-        ? filtered= filtered.filter(param => param[items.option] !== items.selection)
-        : console.log("no boss filter")
+        if(items.selection){
+          filtered = filtered.filter(
+            param => param[items.option] !== items.selection
+          )
+        }
       }  
     })
 
     this.setState({filter: filtered})
-  };
+    // eslint-disable-next-line
+    filtered.length
+    ? this.validCheck("levelAmount", "green")
+    : (
+      this.validCheck("levelAmount", "red"),
+      this.props.hoeBear("noLevels") 
+    )
+    };
 
 
 //handle clock selection change ------------------------------------------------------
@@ -87,7 +97,7 @@ class RaceCreate extends Component {
       part: document.getElementById('part').value,
       day: moment().format("D")
     };
-
+    // eslint-disable-next-line
     if (time.part === "PM" && time.hour < 12) time.hour = parseInt(time.hour) + 12;
     if (time.part === "AM" && time.hour === "12") time.hour = "0"
     
@@ -98,10 +108,17 @@ class RaceCreate extends Component {
         raceTime = moment(time).add(1, 'day');
       }
     }; 
-
+    // eslint-disable-next-line
     moment().isBefore(moment(raceTime))
-    ? this.setState({time: raceTime.valueOf()})
-    : this.setState({time: ''})   
+    ? (
+      this.setState({time: raceTime.valueOf()}),
+      this.validCheck("time", "green")
+    )
+    :( 
+      this.setState({time: ''}),
+      this.validCheck("time", "red")
+    )
+    
   };
 
   //handle radio selection change ------------------------------------------------------
@@ -110,7 +127,8 @@ class RaceCreate extends Component {
     this.setState({
       [name]: value
     });
-   
+    this.validCheck("location", "green");
+    this.validCheck("difficulty", "green");
     setTimeout(this.levelFilter, 50);
     ;
   };
@@ -119,12 +137,24 @@ class RaceCreate extends Component {
   handleCheckChange = event => {
     const { name, value } = event.target;
     let check = document.getElementById(value).checked;
-
+    
     if(name === "location"){
       check
       ? this.state.locArr.push(value)
+      // eslint-disable-next-line
       : this.state.locArr = this.state.locArr.filter(loc => loc !== value)
       this.setState({location: this.state.locArr})
+      // eslint-disable-next-line
+      this.state.difficulty || this.state.locArr.length
+      ? (
+        this.validCheck("location", "green"),
+        this.validCheck("difficulty", "green")
+      )
+      : (
+        this.validCheck("location", "red"),
+        this.validCheck("difficulty", "red")
+      )
+
     }
 
     if(name === "boss"){
@@ -137,10 +167,14 @@ class RaceCreate extends Component {
     setTimeout(this.levelFilter, 50);
   };
 
+//racesUdpate ------------------------------------------------------------------------
+racesUpdate = () => {
+socket.emit('race created', this.props.races)
+}
+
 //handle form submit -----------------------------------------------------------------
   handleFormSubmit = event => {
     event.preventDefault();
-    console.log('started')
     let filtered = this.state.filter;
     let time = true;
     let random
@@ -150,71 +184,76 @@ class RaceCreate extends Component {
     //we need 3 levels
     for(let i = 0; i < 3; i++){
       //if more than three levels are available get random number
-      console.log(filtered)
-
+      // eslint-disable-next-line
       filtered.length 
       ? (  
         random = Math.floor((Math.random() * filtered.length)),
         //push level id into array
         levels.push(filtered[random]._id),
         //filter out the level just picked
-        filtered= filtered.filter(param => param['_id'] !== filtered[random]._id)
+        // eslint-disable-next-line
+        filtered = filtered.filter(param => param['_id'] !== filtered[random]._id)
       )  
         : console.log('not enough levels to pick from')  
     }
     //make sure to much time hassn't passed since time select
+    // eslint-disable-next-line
     moment().isBefore(moment(this.state.time))
     ? console.log("the time is still good")
-    : (time = false, console.log("The time is bad now"))
+    : (
+      time = false, 
+      this.props.hoeBear("badTime"),
+      this.setState({time: ''}),
+      this.validCheck("time", "red")
+    )
 
     //update server
     if ((levels.length === 3) && time) {
-      API.saveRace({
-        category: {
-          difficulty: this.state.difficulty,
-          location: this.state.location,
-          boss: this.state.boss,
-          startTime: this.state.time
-        },
-        levels: levels,
-        messages: [],
-        raceInfo: []
-      })
-        .then((res => this.props.test()), console.log('created race')) 
+      //create the new race data to submit
+      const raceData = {
+                category: {
+                difficulty: this.state.difficulty,
+                location: this.state.location,
+                boss: this.state.boss,
+                startTime: this.state.time
+              },
+              levels: levels,
+              messages: [],
+              raceInfo: []
+            }
+      //send the data to the server
+      API.saveRace(raceData)
+        .then(
+          //reload the races inforamation sent from server
+          (res => this.props.loadRaces()),
+          console.log('created race'),
+          //send new races data to everyone else connected with socket.io
+          setTimeout(this.racesUpdate , 100), 
+          setTimeout(this.props.raceBtn, 500)          
+        ) 
         .catch(err => console.log(err));
     } else console.log("did not create race")
   };
+
+
+// validCheck ---------------------------------------------------------------------------------
+  validCheck = (id, color) => {
+   return document.getElementById(id).style.color = color
+  }
    
 // render -------------------------------------------------------------------------------------
 render() {
   return (
-    <div className="row" id="rightRow">
-      <div className="col-12 " id="topCol">
-          <div className="row">
-              <div className="col-3">
-                  <img className="mx-auto d-block" src={hoebear} alt="Hoebear" style={{height: 48}} />
-              </div>
-              <div className="col-1" style={{padding: 0, margin: 0}}>
-                  <i className="fa fa-caret-left fa-4x" id="icon1" aria-hidden="true"></i>
-              </div>
-              <div className="col-8 text-center align-self-center" id="icon2" >
-                  Hoebear hates you 
-              </div> 
-          </div>   
-      </div> 
-      
       <div className="col-12" style={{margin: 5}}>
         <form>
-          <h4>Race Form</h4>
-          <hr />
-          <div className="form-group" value={this.state.difficulty} onChange={this.handleClockChange} name="time">
-            <label><Icon id="fa fa-clock-o"/> Select Start Time</label>
+          <div className="form-group" value={this.state.difficulty} onChange={this.handleClockChange} name="time" >
+            <label id="time"><Icon id="fa fa-clock-o"/> Select Start Time</label>
             <TimeSelect />    
           </div>
 
           <hr />
-          <div className="form-group " htmlFor="difficulty" value={this.state.difficulty} onChange={this.handleInputChange} name="difficulty">
-            <label><Icon id="fa fa-flask"/> Select By Difficulty</label>
+          <div className="form-group " htmlFor="difficulty" value={this.state.difficulty} onChange={this.handleInputChange} name="difficulty" >
+            <label id="difficulty"><Icon id="fa fa-flask"/> Select By Difficulty</label>
             <br />
 
             {/* Place in difficulty selection */}
@@ -226,7 +265,7 @@ render() {
 
           <hr />
           <div className="form-group" value={this.state.difficulty} onChange={this.handleCheckChange} name="location">
-            <label>
+            <label id="location">
                 <Icon id="fa fa-globe"/> Select By Location 
             </label>
             <br />
@@ -243,16 +282,13 @@ render() {
               <label className="form-check-label">No Boss Levels</label>
             </div>
           </div>
-          <hr />
           <div>
-            {console.log(this.props)}
-          <button type="submit" className="btn btn-secondary btn-sm float-right"  disabled={!((this.state.difficulty || this.state.location) && this.state.time)}
-                  onClick={ this.handleFormSubmit}>Create Race</button>
+          <button type="submit" className="btn test btn-secondary btn-sm float-right"  disabled={!((this.state.difficulty || this.state.locArr.length) && this.state.time && this.state.filter.length)}
+                  onClick={this.handleFormSubmit}>Create Race</button>
           <p id="levelAmount"><Icon id="fa fa-cogs" /> Selecting from {this.state.filter.length} Levels</p>
-          </div>        
+          </div>       
         </form>   
       </div>                                                        
-  </div>  
   )}
 };
             

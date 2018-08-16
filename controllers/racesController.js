@@ -3,10 +3,7 @@ const db = require("../models");
 // Defining methods for the usersController
 module.exports = {
   findAll: function (req, res) {
-      console.log("find all races:");
-      console.log(req.query);
-      console.log("-------");
-     
+    if (req.user) {
       db.Races
         .find(req.query)
         .populate({
@@ -17,8 +14,9 @@ module.exports = {
             path: 'levels',
             select: 'name difficulty location rank type',
         })
-        .then(dbModel => res.json({results: dbModel, sess: req.session}))
+        .then(dbModel => res.json({results: dbModel, sess: { passport: req.session.passport}}))
         .catch(err => res.status(422).json(err));
+    } else { res.json({ error: "Please login", statusCode: 401 }) }
   },
 
   create: function(req, res) {
@@ -29,15 +27,16 @@ module.exports = {
   },
 
 
-//   findById: function (req, res) {
-//     if (req.user) {
-//         console.log(req.params.id)
-//       db.Levels
-//         .findById(req.params.id)
-//         .then(dbModel => res.json({results: dbModel, sess: req.session}))
-//         .catch(err => res.status(422).json(err));
-
-//     }
-//     else { res.json({ error: "Please login", statusCode: 401 }) }
-//   },
+  findById: function (req, res) {
+    // if(req.user){
+      db.Races   
+        .findById(req.params.id)
+        .populate({
+            path: 'levels',
+            select: 'name difficulty location rank type',
+        })
+        .then(dbModel => res.json({results: dbModel, sess: {passport: req.session.passport}}))
+        .catch(err => res.status(422).json(err));
+    // } else { res.json({ error: "Please login", statusCode: 401 }) }
+  },
 };

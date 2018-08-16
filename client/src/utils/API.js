@@ -1,41 +1,21 @@
 import axios from "axios";
 
 export default {
-  // Gets all users
-  getUsers: function() {
-    return axios.get("/api/users");
-  },
-  
-  // Gets the user with the given id
-  getUser: function(id) {
-    return axios.get("/api/users/" + id);
-  },
 
-  // Gets all Races
-  getRaces: function() {
-    return axios.get("/api/races");
-  },
+  getUsers: function() { return axios.get("/api/users") },
+  getUser: function(id) { return axios.get("/api/users/" + id) },
 
-  // Saves a race to the database
-  saveRace: function(RaceData) {
-    return axios.post("/api/races", RaceData);
-  },
-  
-  // Gets all Races
-  getLevels: function() {
-    return axios.get("api/levels");
-  },
+  getRaces: function() { return axios.get("/api/races") },
+  getRaceID: function(id){ return axios.get("/api/races/" + id) },
+  saveRace: function(RaceData) { return axios.post("/api/races", RaceData) },
 
-  twitchAuth: function(){
-    console.log("running auth")
-    return axios.get("/api/auth/twitch");
-  },
+  getLevels: function() { return axios.get("api/levels") },
 
-  twitchCallback: function(){
-    return axios.get("/api/auth/twitch/callback")
-  },
+  getMsgs: function() { return axios.get("api/msg") },
+  getMsg: function(name) { return axios.get("/api/msg/name/" + name) },
+  saveMsg: function(msgData) { return axios.post("/api/msg", msgData) },
 
-  logout: function() {
-    return axios.get("/api/auth/logout");
-  },
+  twitchAuth: function(){ return axios.get("/api/auth/twitch") },
+  twitchCallback: function(){ return axios.get("/api/auth/twitch/callback") },
+  logout: function() { return axios.get("/api/auth/logout") },
 };

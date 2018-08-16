@@ -1,18 +1,4 @@
-#rightRow {
-    margin: 5px;
-    background: #fff; 
-    border: solid rgb(113, 113, 113) 1px; 
-    border-radius: 5px; 
-    box-shadow: 1px 1px 1px 0px #737373
-}
 
-#topCol {
-    height: 50px; 
-    background: #a370d0; 
-    border-bottom: solid #000 1px; 
-    border-radius: 5px 5px 0 0; 
-    background-image: url('pixelBackground.jpg');
-}
 
 #icon1 {
     position: absolute; 
@@ -23,7 +9,7 @@
 
 #icon2 {
     background: #fff; 
-    padding: 0; 
+    padding: 0 3px; 
     margin: 6px 0; 
     height: 37px; 
     z-index: 1; 
@@ -44,9 +30,17 @@ hr {
 }
 
 #levelAmount {
-   
     position: relative;
     width: 190px;
     top: 5px;
     font-size: 14px;
+    color: green;
+}
+
+#time, #location, #difficulty {
+    color: rgb(255, 0, 0)
+}
+
+.test:disabled {
+    background-color: rgb(106, 0, 0);
 }

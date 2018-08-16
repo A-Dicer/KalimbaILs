@@ -62,6 +62,14 @@ db.levels.insert(
    ]
 )
 
+db.msgs.insert(
+   [
+        { name: "raceCreate", type: "normal", msg: ["L", "o", "o", "k", "s", " ", "l", "i", "k", "e", " ", "i", "t", "s", " ", "t", "i", "m", "e", " ", "t", "o", " ", "c", "r", "e", "a", "t", "e", " ", "a", " ", "r", "a", "c", "e", ".", " ", "H", "o", "e", "b", "e", "a", "r", " ", "a", "p", "p", "r", "o", "v", "e", "s", "."]},
+        { name: "noDifficulty", type: "Error", msg: ["Y", "o", "u", " ", "k", "n", "o", "w", ".", ".", ".", " ", "p", "i", "c", "k", "i", "n", "g", " ", "s", "o", "m", "e", " ", "s", "o", "r", "t", " ", "o", "f", " ", "d", "i", "f", "f", "i", "c", "u", "l", "t", "y", " ", "i", "s", " ", "a", " ", "g", "o", "o", "d", " ", "i", "d", "e", "a", "."]},
+
+   ]
+)
+
 db.races.insert({difficulty: "Easy", participants: [{levelid: "5a4f5dba32f2ccd6fea32198"},], levels: [{levelid: "1"}, {levelid: "2"}, {levelid: "3"},]})
 
 db.Rinfo.insert({

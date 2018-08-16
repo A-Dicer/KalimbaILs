@@ -1,7 +1,7 @@
 import React from "react";
 
-const Icon = props =>
+const Icon = ({id}) =>
 
-<i className={props.id} aria-hidden="true"></i>;
+<i className={id} aria-hidden="true"></i>;
   
 export default Icon;
