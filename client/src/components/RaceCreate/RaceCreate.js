@@ -16,7 +16,7 @@ class RaceCreate extends Component {
     filter: [],
     time: '',
     difficulty: '',
-    location: '',
+    location: [],
     boss: '',
     locArr: []
   }}
@@ -81,10 +81,8 @@ class RaceCreate extends Component {
     // eslint-disable-next-line
     filtered.length
     ? this.validCheck("levelAmount", "green")
-    : (
-      this.validCheck("levelAmount", "red"),
-      this.props.hoeBear("noLevels") 
-    )
+    : this.validCheck("levelAmount", "red")
+
     };
 
 
@@ -154,15 +152,14 @@ class RaceCreate extends Component {
         this.validCheck("location", "red"),
         this.validCheck("difficulty", "red")
       )
-
+      console.log(this.state.location)
     }
 
     if(name === "boss"){
       check
       ? this.setState({boss: 'Boss'})
       : this.setState({boss: ''})
-      
-      
+        
     }
     setTimeout(this.levelFilter, 50);
   };
@@ -202,7 +199,6 @@ socket.emit('race created', this.props.races)
     ? console.log("the time is still good")
     : (
       time = false, 
-      this.props.hoeBear("badTime"),
       this.setState({time: ''}),
       this.validCheck("time", "red")
     )

@@ -42,15 +42,15 @@ class Main extends Component {
         API.getRaces()
             .then(res => { 
                 // eslint-disable-next-line         
-                res.data.sess.passport && res.data.sess.passport.user
-                ? this.setState({currentUser: res.data.sess.passport.user, races: res.data.results}) 
+                res.data.sess.user
+                ? this.setState({currentUser: res.data.sess.user, races: res.data.results}) 
                 : this.props.history.push("/")
             }
         ).catch(err => console.log(err));
     };
 
     raceBtn = () => {
-        this.loadMsg("raceCreate")
+        
         Fade("rightRow", 0)
         setTimeout(function(){
             this.setState({rightside: ""})
@@ -75,16 +75,6 @@ class Main extends Component {
         const { value } = event.target;
         window.location = "/races/" + value ; 
     }
-   
-
-    loadMsg = (name) => {
-        API.getMsg(name)
-        .then(res => {          
-        this.setState({msg: res.data.results.msg, run: true})
-        this.setState({run: false})  
-        }
-    ).catch(err => console.log(err));
-    }
     
     logOut = event => {
         event.preventDefault();
@@ -100,10 +90,7 @@ class Main extends Component {
     return (
         <div>
         {/* Navbar component */}
-        <Nav 
-            userInfo={this.state.currentUser} 
-            button={this.logOut}  
-        />
+        <Nav userInfo={this.state.currentUser} button={this.logOut} />
 
         {/* This goes behind the Navbar to hide scroll */}
         <div id="behindNav"></div>
@@ -123,12 +110,10 @@ class Main extends Component {
             {/* Container for Rightside components */}
             <RightSide 
                 type = {this.state.rightside}
-                msg = {this.state.msg}
                 run = {this.state.run}
                 raceBtn = {this.raceBtn} 
                 loadRaces = {this.loadRaces}
                 races = {this.state.races}
-                hoeBear = {this.loadMsg}
                 lobby = {this.state.lobby}
             />  
          {/* <div>

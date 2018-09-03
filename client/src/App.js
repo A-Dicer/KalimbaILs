@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import Main from "./pages/Main";
 import Test from "./pages/Test";
 import Races from "./pages/Races";
-import LeaderBoard from "./pages/LeaderBoard";
+import Overlay from "./pages/Overlay";
 
 const App = () =>
   <Router>
@@ -16,7 +16,7 @@ const App = () =>
         <Route exact path="/main" component={Main} />
         <Route exact path="/test" component={Test} />
         <Route exact path="/races/:id" component={Races} />
-        <Route exact path="/user/:id" component={LeaderBoard} />
+        <Route exact path="/user/:id" component={Overlay} />
         <Route component={NoMatch} />
       </Switch>
     </div>

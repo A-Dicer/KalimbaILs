@@ -54,6 +54,7 @@ class HoeBear extends Component {
     return (
         
         <div>
+           
             <img className=""  id="hoebear" src={Head[this.state.face]} alt="Hoebear" />
         </div> 
           

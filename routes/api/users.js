@@ -5,10 +5,6 @@ const usersController = require("../../controllers/usersController");
 router.route("/").get(usersController.findAll)
  
 // Matches with "/api/users/:id"
-router.route("/:id").get(usersController.findById)
-
-// Matches with "/api/users/name/:userName"
-router.route("/name/:userName").get(usersController.findByName)
- 
+router.route("/:id").get(usersController.findById).put(usersController.updateUser)
 
 module.exports = router;

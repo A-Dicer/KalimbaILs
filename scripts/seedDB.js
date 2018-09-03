@@ -73,9 +73,9 @@ const levelSeed = [
         { levelid: 54, name: "Lemmy", location: "InnerVoid", difficulty: "Very Hard", rank: 7.5, time: 600000, type: "ShortHand" }
 ];
 
-db.levels
+db.Levels
   .remove({})
-  .then(() => db.levels.collection.insertMany(levelSeed))
+  .then(() => db.Levels.collection.insertMany(levelSeed))
   .then(data => {
     console.log(data.insertedIds.length + " records inserted!");
     process.exit(0);

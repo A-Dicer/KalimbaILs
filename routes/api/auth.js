@@ -10,7 +10,7 @@ router.route("/twitch").get(passport.authenticate("twitch"))
 router.route("/twitch/callback")
 .get(passport.authenticate("twitch", { failureRedirect: "/" }), 
   function(req, res) {
-    res.redirect("http://localhost:3000/main");
+    res.redirect("http://10.0.0.186:3000/main");
 });
 
 //logout

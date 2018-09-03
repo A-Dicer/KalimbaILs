@@ -36,12 +36,9 @@ passport.use( new twitchStrategy({
   function(accessToken, refreshToken, profile, done) {
     User.findOrCreate(
       {twitchId: profile.id}, 
-      {userName: profile.displayName, imgLink: profile._json.logo, email: profile.email}, 
-      {inRace: ""},
-      function (err, user) {
-        console.log(user.userName + " has logged in");
-        return done(err, user);
-      }
+      {username: profile.displayName, imgLink: profile._json.logo, email: profile.email}, 
+      {inRace: "5b7e2528749a6c17c0cb6fb7"},
+      function (err, user) { return done(err, user) }
     );
   }
 ));

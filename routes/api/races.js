@@ -2,11 +2,9 @@ const router = require("express").Router();
 const racesController = require("../../controllers/racesController");
 
 // Matches with "/races"
-router.route("/")
-    .get(racesController.findAll)
-    .post(racesController.create);
+router.route("/").get(racesController.findAll).post(racesController.create);
  
 // Matches with "/api/races/:id"
-router.route("/:id").get(racesController.findById)
+router.route("/:id").get(racesController.findById).put(racesController.update)
 
 module.exports = router;

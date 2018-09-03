@@ -38,7 +38,7 @@ const RaceContainer = (props) =>
         </Fade>
         ))}
         </TransitionGroup>     
-      ) : console.log("no races")
+      ) : null
     }
   </div>;
             

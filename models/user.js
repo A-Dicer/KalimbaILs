@@ -6,10 +6,10 @@ const findOrCreate = require('mongoose-findorcreate')
 
 const userSchema = new Schema({
   twitchId: { type: String },
-  userName: { type: String },
+  username: { type: String },
   imgLink: { type: String },
   email: { type: String },
-  inRace: { type: Schema.Types.ObjectId, ref: 'Races' },
+  inRace: { type: Schema.Types.ObjectId, ref: 'Races', },
 });
 
 userSchema.plugin(passLocalMon);

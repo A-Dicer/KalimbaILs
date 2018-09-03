@@ -1,8 +1,10 @@
 import React from "react";
 import "./Nav.css";
 import brandLogo from "./kaliNavLogo.png";
-import RaceTimer from "../../components/RaceTimer";
+
 import Icon from "../../components/Icon";
+
+const logOut = event => {event.preventDefault(); window.location = "/logout"};
 
 const Nav = (props) =>
     
@@ -14,16 +16,17 @@ const Nav = (props) =>
         <div className="col-8">
             <div className="row">
                 <div className="col-12 text-right"  id="userName">
-                  { props.userInfo.userName }
+                  { props.userInfo.username }
                 </div>
+                  
                 <div className="col-12 text-right" id="raceStatus">
-                  { props.userInfo.inRace ? <RaceTimer/> : 'Not in a Race' }
+                  { props.userInfo.inRace !== null ? "In a Race" : 'Not in a Race' }
                 </div>
             </div>
         </div>
         <div className="col-4" style={{padding: 0}}>
             <img className="" src={ props.userInfo.imgLink } alt="twitch img" id="userImg" />  
-            <button type="submit" className="btn btn-secondary btn-sm" id="logOut" onClick={props.button}><Icon id="fa fa-sign-out fa-lg"/></button>
+            <button type="submit" className="btn btn-secondary btn-sm" id="logOut" onClick={logOut}><Icon id="fas fa-sign-out-alt "/></button>
         </div>
         
     </div>  

@@ -26,7 +26,7 @@ class Login extends Component {
     event.preventDefault();
     
       console.log("twitchAuth started")
-      window.location = "http://localhost:3001/api/auth/twitch"; 
+      window.location = "http://10.0.0.186:3001/api/auth/twitch"; 
       
       // API.twitchAuth().then(console.log("start"))
       

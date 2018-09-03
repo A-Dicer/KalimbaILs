@@ -6,17 +6,24 @@ const app = express();
 exports = module.exports = function(io) {  
     // Set socket.io listeners.
     io.on('connection', (socket) => {
-      console.log('connected')
 
       socket.on('race created', function(data){
         socket.broadcast.emit('get races', data)     
       })
 
-      socket.on('testSend', function(data){
-        socket.broadcast.emit('test', data) 
-        socket.emit('test', data)    
+      socket.on('sendChat', function(data){
+        socket.broadcast.emit('updateChat', data) 
+        socket.emit('updateChat', data)    
       })
-  
+      
+      socket.on('userData', function(data, id){
+        socket.broadcast.emit(id, data) 
+        socket.emit(id, data)    
+      })
+
+      socket.on('leaderboard', function(data, id){
+        socket.broadcast.emit(id, data)   
+      })
   });
 }
 
