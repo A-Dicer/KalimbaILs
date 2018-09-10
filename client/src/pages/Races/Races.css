@@ -1,2 +1,14 @@
-.left > .col-6 {min-width: 360px}
-.container-fluid { margin-top: 80px}
+.left {
+    /* border: solid blue 1px;  */
+}
+
+.left > .col-md-6 {
+    padding: 0 15px; 
+    /* border: solid red 1px;  */
+    
+}
+.container-fluid { 
+    margin-top: 80px;
+
+
+}

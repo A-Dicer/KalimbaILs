@@ -1,17 +1,16 @@
 .chatSection { 
     box-shadow: 1px 1px 1px 0px #737373;
     border-radius: 5px;
-    min-width: 350px;
-    max-width: 350px;
+    margin: 0 auto;
     border: solid #000 1px;
     background-image: url('pixelBackground.jpg');
     background-repeat: no-repeat;
     background-size: 100%;
+    overflow: hidden;
 }
  
-.chatSection:nth-child(1) {
-    
-    border-bottom: solid #ccc 1px;
+.chatSection > .col-12:nth-child(1) {
+    border-bottom: solid #000 1px;
     height: 200px;
     border-radius: 5px 5px 0 0;
     padding: 5px;
@@ -20,7 +19,6 @@
     
 }
 .chatBox {position: absolute; bottom: 0}
-
 .chatPlayer {float: left; padding-right: 5px; font-weight: bold; color: rgb(0, 116, 161)}
 
 .chatInput > .col-10 {padding: 0; margin: 0}
@@ -35,9 +33,18 @@
     border: none
 }
  
-.chatInput > .col-10 > input:focus {outline: none; box-shadow: none}
 .chatInput > .col-2 {padding: 0}
  
-#chatBtn > button {
-    width: 100%; border: none; border-left: solid #000 1px; border-radius: 0; padding: 0; margin: 0;height: 100%; 
+.col-2 > button {
+    width: 100%; 
+    border: none; 
+    border-left: solid #000 1px; 
+    border-radius: 0; 
+    padding: 0; 
+    margin: 0;
+    height: 100%; 
 }
+
+.col-2 > button:disabled {background: rgb(112, 2, 2)}
+
+.Hoebear {color: rgb(194, 44, 186)}

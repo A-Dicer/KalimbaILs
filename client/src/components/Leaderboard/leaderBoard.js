@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Container, Row, Col } from "../../components/Grid";
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import Hoebear from "../../components/HoeBear";
-// import RaceTimer from "../../components/RaceTimer";
 import Icon from "../../components/Icon";
 import Level from "../../components/Levels";
 import "./leaderBoard.css"; 
@@ -19,7 +18,7 @@ class LeaderBoard extends Component {
         this.state = {
             containerStyle: {}, 
             hbStyle: {},
-            pos: ["1px", "38px", "80px"],
+            pos: ["2px", "40px", "78px","116px", "154px"],
         }
     }
 
@@ -40,12 +39,11 @@ class LeaderBoard extends Component {
                         </Col>
                         
                         <TransitionGroup className="col-7">
-                            {this.props.started
-                            ?(console.log("started"), console.log(this.props))
+                            { this.props.started
+                            ?(null)
                             :(
                             <Fade>
                             <Row>
-                                {console.log(this.props)}
                                 <Col size="12">
                                 { this.props.info.difficulty
                                     ? "Difficulty: " + this.props.info.difficulty
@@ -64,8 +62,7 @@ class LeaderBoard extends Component {
                                     ? (
                                         this.props.info.location.map((loc, i) => (
                                             <img src={require("../../img/Backgrounds/" + loc + "2.png" )} key={loc + i} alt="" />
-                                        ))
-                                      
+                                        )) 
                                     )    
                                     : " None"
                                 }
@@ -77,19 +74,26 @@ class LeaderBoard extends Component {
                     </Row>  
                 </div>
                 <div className="col-12" style={this.props.styles.lvStyle}>
-                    {this.props.levels
-                        ? (
+                    
                             <Row>
-                                <Level level={this.props.levels[0]}/>
-                                <Level level={this.props.levels[1]}/>
-                                <Level level={this.props.levels[2]}/>
+                                <Level level={this.props.level1}/>
+                                <Level level={this.props.level2}/>
+                                <Level level={this.props.level3}/>
                             </Row>
-                        )
-                            : null
-                    }
+                   
                     
                 </div>
-                <div className="col-12" style={{height: (45 * this.props.leaderboard.length)}}>
+                <div className="col-12" style={this.props.styles.tStyle}>
+                    
+                            <Row>
+                                <Col size="12">
+                                    {this.props.time} 
+                                </Col>
+                            </Row>
+                   
+                    
+                </div>
+                <div className="col-12" style={{height: (38 * this.props.leaderboard.length)}}>
                     <Container>
         
                                 <TransitionGroup className="row leaderboard">
@@ -101,14 +105,14 @@ class LeaderBoard extends Component {
                                     ))
                                 }{
                                     this.props.leaderboard.map((item, i) => (
-                                        
+                                    
                                         <Fade key={i+item.name}>
                                         <button 
-                                        className='btn' 
-                                        style={{top: this.state.pos[i]}}
-                                        onClick={this.changePos}
-                                        key={i+item.name}
-                                    >  
+                                            className={`btn ${this.props.player === item.name ? "player" :"otp"}`}
+                                            style={{top: this.state.pos[i]}}
+                                            onClick={this.changePos}
+                                            key={i+item.name}
+                                        >     
                                         <Row>
                                             <Col size="2">  
                                                <img src={item.img} alt="" /> 

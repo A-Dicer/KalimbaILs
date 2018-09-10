@@ -5,7 +5,7 @@ import Head2 from "./hoebearHead2.png";
 const Head = {
     0: Head0,
     1: Head1,
-    2: Head2,
+    2: Head2
 }
-  
-export default Head;
+
+export default Head

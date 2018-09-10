@@ -17,7 +17,7 @@
     font-family: kalimba;
     font-size: 15px;
     /* letter-spacing: 1.2px; */
-
+    margin: 0 auto;
     text-shadow: 1px 1px 5px rgb(240, 240, 240);
 
 }
@@ -59,9 +59,7 @@
     background: rgba(0, 0, 0, 0.249);
     border-top: solid #000 1px;
     border-bottom: solid #000 1px;
-    
 }
-
 .lb > .col-12:nth-child(2) > .row > .col-4 {
     
     height: 100px;
@@ -88,7 +86,7 @@
 }
 
 /* Timer */
-/* .lb > .col-12:nth-child(3) { 
+.lb > .col-12:nth-child(3) { 
     height: 0px; 
     opacity: 0; 
     display: flex;
@@ -97,11 +95,10 @@
     font-size: 50px; 
     color: rgb(2, 125, 2); 
     text-shadow: 2px 2px 2px rgb(88, 88, 88);
-}  */
-
+} 
+.lb > .col-12:nth-child(3) > .row > .col-12 { border-bottom: solid #000 1px}
 /* Leaderboard */
-.lb > .col-12:nth-child(3) { 
-    
+.lb > .col-12:nth-child(4) { 
     opacity: 1;
     margin: 15px 0;
 }
@@ -118,7 +115,7 @@
 
 .leaderboard > .col-12 {
     padding: 0;
-    height: 37px;
+    height: 38px;
     display: flex;
     align-items: center;
  
@@ -133,60 +130,44 @@
     position: absolute; 
     left: 35px;
     width: 300px;
-    height: 35px;
-  
+    height: 30px;
     overflow: hidden;
-
     color: #000;
-    
 }
 
-.leaderboard > button:nth-child(odd){
-    background: #ccc;
-}
-
-.leaderboard > button:nth-child(even){
-    background: rgb(155, 155, 155);
-}
-
+.player {background: linear-gradient(to right,  rgb(191, 228, 233), rgb(128, 159, 164))}
+.otp {background: linear-gradient(to right, #ccc, rgb(118, 118, 118))}
 button > .row {
     display: flex;
     align-items: center;
-    font-size: 15px;
-  
+    font-size: 15px;  
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
 
 button > .row > .col-5 {
     padding: 0;
-    /* border: solid purple 1px; */
-    text-align: left;
-    overflow: hidden;
+    height: 18px;
 }
 
 button > .row > .col-3 {
     padding: 0;
     text-align: center;
-    overflow: hidden;
-    /* border: solid green 1px; */
+    height: 18px;
 }
 
 button > .row > .col-2 {
     padding: 0;
     padding-left: 10px;
     text-align: left;
-    /* border: solid blue 1px; */
-    position: relative;
-    overflow: hidden;
+    height: 18px;
 }
 
 
 button > .row > .col-2 > img {
-    
     border-left: solid #000 1px;
     border-right: solid #000 1px;
-    height: 33px; 
-
+    height: 28px; 
+    position: relative;
+    top: -5px;
 }
