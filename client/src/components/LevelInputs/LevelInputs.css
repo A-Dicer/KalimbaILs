@@ -1,0 +1,71 @@
+.inputContainer {
+    border: solid #000 2px;
+    border-radius: 5px;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.166), rgba(0, 0, 0));
+    background-image: url('pixelBackground.jpg');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    box-shadow: 1px 2px 5px 1px #737272;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+.levelsInput{
+   margin: 5px -15px;
+   padding: 0;
+   text-align: center;
+   font-size: 15px;
+}
+.levelsInput > div {
+    
+    
+    /* position: relative; */
+    height: 95px;
+   /* border: solid red 1px; */
+   
+    
+    overflow: hidden;
+}  
+
+.levelsInput > div > input {
+    position: relative;
+    
+    height: 18px;
+    width: 100%; 
+    z-index: 3;
+    text-align: center;
+    background: none;
+    border: none;
+}
+.levelsInput > div > #totemBackground {
+    position: absolute;
+    
+    /* opacity: .3; */
+    left: 0;
+    z-index: 1;
+    
+}
+
+.levelsInput > div > #totemHead {
+    z-index: 2;
+    position: absolute;
+    height: 150px;
+    /* border: solid red 1px; */
+    top: -23px;
+    right: -240px;
+    margin: 0 auto;
+   
+    
+}
+
+.levelsInput > div > h4 {
+   
+    position: relative;
+    font-size: 20px;
+    z-index: 3;
+    margin-bottom: -2px ;
+    font-family: kalimba;
+    letter-spacing: 1px;
+    
+    text-shadow: 1px 1px 6px #fff;
+}

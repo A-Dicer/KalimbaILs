@@ -5,6 +5,7 @@ import moment from "moment";
 import Chatbox from "../../components/Chatbox"
 import { Container, Row, Col } from "../../components/Grid";
 import Leaderboard from "../../components/Leaderboard";
+import LevelInputs from "../../components/LevelInputs";
 import "./Races.css";
 
 const io = require('socket.io-client')  
@@ -51,20 +52,13 @@ class Races extends Component {
                     ]
                     // eslint-disable-next-line
                     race.ready = false,
-                    race.styles = { 
-                        lvStyle: {},
-                        lbStyle: {},
-                        tStyle: {},
-                        btnStyle: []
-                    }, 
+                    race.styles = { lvStyle: {}, lbStyle: {}, tStyle: {}, btnStyle: []}, 
                     race.started = res.data.results.started 
                     race.time = 0
-
                     race.levels.forEach((level)=> race.time += level.time)        
 
                 this.setState({raceCheck: this.inRace(race.leaderboard, res.data.sess.user.username)})
                 this.setState({currentUser: res.data.sess.user, race: race}) 
-                console.log(race)
             }
         ).catch(err => console.log(err));
     }
@@ -185,6 +179,12 @@ class Races extends Component {
                                 ? <button className="btn btn-sm btn-info" onClick={this.leaveRace}> leave </button>
                                 : <button className="btn btn-sm btn-info" onClick={this.joinRace}> join </button>
                             }
+
+                            { this.state.race.category
+                                ? <LevelInputs levels={this.state.race.levels}/> 
+                                : null
+                            }
+                           
                             
                             <div className="form-group" value='' onChange={this.handleCheckChange} name="ready" >
                                 <div className="form-check form-check-inline">

@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "../../components/Grid";
-import Stars from "../../components/Stars"
+import Stars from "../../components/Stars";
 
 const Levels = ({level}) =>     
         <Col size="4">
