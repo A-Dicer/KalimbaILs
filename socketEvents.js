@@ -9,9 +9,10 @@ exports = module.exports = function(io) {
     // Set socket.io listeners.
     io.on('connection', (socket) => {
 
-      socket.on('raceLogic', function(data, id){
+      socket.on('raceLogic', function(info, id){
+
+        let data = JSON.parse(JSON.stringify(info))
         
-       
         const  hb = "Hoebear";
         const  msg = [
                   `Hello Humans. Lets get the race started.`,
@@ -31,7 +32,6 @@ exports = module.exports = function(io) {
         levelSelect = (lvl,randomTime) => {
           let time = 0;
 
-       
           for(let i = 0; i <= randomTime; i++){
           setTimeout(function(){
               let randomLevel = Math.floor((Math.random() * 53)) + 1
@@ -45,9 +45,7 @@ exports = module.exports = function(io) {
           time += 150
           }
         }
-        
-        
-        
+
         
 
         //Race Starts ----------------------------------------------------------
@@ -141,8 +139,7 @@ exports = module.exports = function(io) {
       socket.on('race created', function(data){socket.broadcast.emit('get races', data)})
       socket.on('sendChat', function(data, id){io.in(`room${id}`).emit(`chat${id}`, data)})
       socket.on('joinRoom', function(id){socket.join(`room${id}`), console.log("joined")})
-      socket.on('leaveRoom', function(id){socket.leave(`room${id}`), console.log("left")})
-      
+      socket.on('leaveRoom', function(id){socket.leave(`room${id}`), console.log("left")})  
       socket.on('leaderboard', function(data, id){
         updateRace(id, {leaderboard: data.leaderboard}).catch(err => console.log(err))
         io.in(`room${id}`).emit(id, data)

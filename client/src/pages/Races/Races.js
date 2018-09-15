@@ -191,18 +191,20 @@ class Races extends Component {
         let seconds = moment.duration(time).seconds()
         let mills
         type === 'clock' 
-        ? mills = `.${moment.duration(time).milliseconds()/100}`
-        : mills = `.${moment.duration(time).milliseconds()/10}`
+        ? mills = Math.floor(moment.duration(time).milliseconds()/100)
+        : mills = Math.floor(moment.duration(time).milliseconds()/10)
 
         
         if (seconds < 10) seconds = `0${seconds}`
         
         if(type === 'clock'){
+            if (mills == "0") mills = 0
             if (minutes < 10) minutes = `0${minutes}`
-            if(minutes <= 0) return(`${seconds}${mills}`);
+            if(minutes <= 0) return(`${seconds}.${mills}`);
             else return(`${minutes}:${seconds}`);
         } else {
-            if (mills == ".0") mills = ''
+            if (mills == "0") mills = ''
+            else mills = `.${mills}`
             if (minutes < 10) minutes = `${minutes}`
             if(minutes <= 0) return(`${seconds}${mills}`);
             else return(`${minutes}:${seconds}${mills}`);
@@ -230,8 +232,6 @@ class Races extends Component {
         this.setState({levelTimes: newTimes})
         
         event.key === "Enter" ? this.timeInputSubmit() : null
-        // splits[id][name] = value.replace(/[^0-9, :, .]/g, '');
-        // this.setState({runSplits: splits});  
     };
 
 //Time Input Submit --------------------------------------------------------------------------------- 
@@ -277,14 +277,13 @@ class Races extends Component {
 
 //Tick Interval -------------------------------------------------------------------------------------
     tick = () => {
-        let newTime
+        let newTime = new moment()
+        let startTime = moment(this.state.race.started)
+        let time = this.state.race.time - newTime.diff(startTime, 'milliseconds')
         
-        this.state.time === 0
-        ? (clearInterval(this.interval), console.log(`done`))
-        : (
-            newTime = this.state.time -= 100,
-            this.setState({time: newTime,})
-        )     
+        time <= 0
+        ? (clearInterval(this.interval), console.log(`done`), this.setState({time: 0}))
+        : this.setState({time: time})  
     }
 
     test = () =>{
