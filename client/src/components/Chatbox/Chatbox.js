@@ -2,10 +2,22 @@ import React from "react";
 import { Row, Col } from "../../components/Grid";
 import "./chatbox.css"
 
-const Chatbox = ({chatBox, sendChat, updateChatInput, check}) => (
+const Chatbox = ({chatBox, sendChat, updateChatInput, check, started, join, leave, forfeit, ready}) => (
     <Row input="chatSection">
+                
         <Col size="12">
+        { 
+                started && !check
+                ? <button className="btn btn-sm btn-info" onClick={forfeit}> Forfeit </button>
+                :   ready 
+                    ? null
+                    :   !check
+                        ? <button className="btn btn-sm btn-info" onClick={leave}> leave </button>
+                        : <button className="btn btn-sm btn-info" onClick={join}> join </button>     
+                }
+        
             <Row input="chatBox">
+                
                 {chatBox.chat.map((chat, i)=>(
                     <div className="col-12" key={`chat${i}`}>
                         <div className={"chatPlayer " + chat.player}>{`${chat.player}: `}</div>

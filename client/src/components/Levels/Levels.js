@@ -8,7 +8,12 @@ const Levels = ({level}) =>
                 <Row>
                     <Col size="12">
                         <div>  {level.name} </div>
-                        <img src={require("../../img/Totems/" + (level.levelid -1) + ".png" )} alt="" />
+                        <img src={require(`../../img/TotemHeads/${level.levelid}.png`)} className="totemHead" alt="" />
+                        {
+                            level.location 
+                            ? <img src={require(`../../img/Backgrounds/${level.location}.png`)} className="totemBg" alt="" /> 
+                            : <img src={require("../../img/Backgrounds/UnderWorld.png" )} className="totemBg" alt="" /> 
+                        }
                         <Stars rank={level.rank}/>
                     </Col>
                 </Row>

@@ -7,6 +7,7 @@ import { Container, Row, Col } from "../../components/Grid";
 import Leaderboard from "../../components/Leaderboard";
 import LevelInputs from "../../components/LevelInputs";
 import "./Races.css";
+import { isNullOrUndefined } from "util";
 
 const io = require('socket.io-client')  
 const socket = io() 
@@ -16,15 +17,18 @@ class Races extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            race: {},
+            uStyle: {},
+            playerInfo: 0,
+            time: null,
+            levelTimes:{ total: '', l1: '', l2: '', l3: ''},
             raceCheck: false,
+            forfeitCheck: false, //not sure I need this 
             currentUser: [],
             chatBox: {msg: [], chat: [],chatInput: ""},
             lobby: this.props.match.params.id,    
         }
 
-        socket.on(this.state.lobby, (data) => this.setState({race: data}))
-        
+        socket.on(this.state.lobby, (data) => this.setState({race: data}))   
         socket.on(`chat${this.state.lobby}`, (data) => {
             let chatBox = Object.assign({}, this.state.chatBox);      
                 chatBox.chat.push(data)
@@ -33,32 +37,60 @@ class Races extends Component {
     }
 
     // when component mounts get race info
-    componentDidMount() { this.loadRace(this.props.match.params.id) }
-    componentWillUnmount() {clearInterval(this.interval)}
+    componentDidMount() { this.loadRace(this.props.match.params.id), socket.emit('joinRoom', this.state.lobby)}
+    componentWillUnmount() {clearInterval(this.interval), socket.emit('leaveRoom', this.state.lobby) }
 
 //load races from api -------------------------------------------------------------------------------
     loadRace = (raceId) => {
         API.getRaceID(raceId)
-            .then(res => {    
+            .then(res => { 
+                const disLev = {
+                    "_id": "", "levelid": "0", "name": "???", 
+                    "location": "", "difficulty": "", "rank": "", 
+                    "time": "", "type": ""
+                }
+               
+                let inRace = this.inRace(res.data.results.leaderboard, res.data.sess.user.username)
+                
                 let race = Object.assign({}, this.state.race)
-                    race.category = res.data.results.category
+                    
+                    race.started = res.data.results.started,
+                    
+                    
                     race.raceID = this.state.lobby
                     race.leaderboard = res.data.results.leaderboard
                     race.levels = res.data.results.levels
-                    race.disLev = [
-                        {"_id": "", "levelid": "2", "name": " ", "location": "", "difficulty": "", "rank": "", "time": "","type": ""},
-                        {"_id": "", "levelid": "1", "name": " ", "location": "", "difficulty": "", "rank": "", "time": "","type": ""},
-                        {"_id": "", "levelid": "1", "name": " ", "location": "", "difficulty": "", "rank": "", "time": "","type": ""}
-                    ]
+                    race.disLev = [disLev, disLev, disLev]
+                  
+                    race.category = res.data.results.category
                     // eslint-disable-next-line
-                    race.ready = false,
-                    race.styles = { lvStyle: {}, lbStyle: {}, tStyle: {}, btnStyle: []}, 
-                    race.started = res.data.results.started 
+                    race.styles = { 
+                        lvStyle: race.started ? {height: "110px", opacity: 1} : null, 
+                        lbStyle: {}, 
+                        tStyle: race.started ? {height: "100px", opacity: 1} : null, 
+                        iStyle: inRace && race.started ? {height: "438px", opacity: 1} : null, 
+                    }
+                    
                     race.time = 0
-                    race.levels.forEach((level)=> race.time += level.time)        
 
-                this.setState({raceCheck: this.inRace(race.leaderboard, res.data.sess.user.username)})
-                this.setState({currentUser: res.data.sess.user, race: race}) 
+                    race.started ? race.levels.forEach((level, i) => race.disLev[i] = level) : isNullOrUndefined
+                    race.levels.forEach((level)=> race.time += level.time) 
+                    race.ready = (res.data.results.started ? true : false)
+
+                    const player = race.leaderboard.filter(player => player.name === res.data.sess.user.username)
+                    let levelTimes
+                    
+                    player.length
+                    ?   levelTimes = player[0].times
+                    :   levelTimes = { 
+                        total: this.timeConvert(race.time), 
+                        l1: this.timeConvert(race.levels[0].time), 
+                        l2: this.timeConvert(race.levels[1].time), 
+                        l3: this.timeConvert(race.levels[2].time)
+                        }   
+                    
+                this.setState({raceCheck: inRace})
+                this.setState({currentUser: res.data.sess.user, race: race, time: race.time, levelTimes: levelTimes}) 
             }
         ).catch(err => console.log(err));
     }
@@ -91,9 +123,13 @@ class Races extends Component {
         const info = {
             name: this.state.currentUser.username,
             img: this.state.currentUser.imgLink,    
-            times: { total: 0, l1: 0, l2: 0, l3: 0},
+            times: { 
+                total: this.timeConvert(this.state.race.time), 
+                l1: this.timeConvert(this.state.race.levels[0].time), 
+                l2: this.timeConvert(this.state.race.levels[1].time), 
+                l3: this.timeConvert(this.state.race.levels[2].time)},
             direction: '',
-            movement: 0,
+            movement: '',
             ready: false,
         }
 
@@ -101,17 +137,13 @@ class Races extends Component {
        
         //send new leaderboard info to socket and DB
         this.setState({raceCheck: true})
-        socket.emit('joinRoom', this.state.lobby)
         socket.emit('raceLogic', newInfo, this.state.lobby)
         socket.emit('sendChat', {player: "Hoebear", message: this.state.currentUser.username + " has joined"}, this.state.lobby)
         API.updateRace(this.state.lobby, {leaderboard: newInfo.leaderboard}).catch(err => console.log(err))
-        // API.updateUser(this.state.currentUser._id, {inRace: this.state.lobby}).catch(err => console.log(err))
     }
 
 //Leave Race ----------------------------------------------------------------------------------------
-    leaveRace = (event) => {
-        event.preventDefault()
-
+    leaveRace = () => {
         let newInfo = Object.assign({}, this.state.race)
         const data = this.state.race.leaderboard.filter(player => player.name !== this.state.currentUser.username)
         newInfo.leaderboard = data
@@ -121,15 +153,23 @@ class Races extends Component {
         socket.emit('raceLogic', newInfo, this.state.lobby)
         socket.emit('sendChat', {player: "Hoebear", message: this.state.currentUser.username + " has left"}, this.state.lobby)
         API.updateRace(this.state.lobby, {leaderboard: newInfo.leaderboard}).catch(err => console.log(err))
-        // API.updateUser(this.state.currentUser._id, {inRace: null}).catch(err => console.log(err))
+    }
+
+//Forfeit Race --------------------------------------------------------------------------------------
+    forfeitRace = () => {
+        let data = Object.assign({}, this.state.race.leaderboard)
+        this.timeInputSubmit("forfeit")
+        this.setState({raceCheck: false, forfeitCheck: true})
+        
+        socket.emit('sendChat', {player: "Hoebear", message: this.state.currentUser.username + " forfeited!"}, this.state.lobby)
+        this.leaveRace()
     }
 
 //In Race -------------------------------------------------------------------------------------------
-    inRace = (lb, name) => {      
-        if(lb.filter(p => p.name === name).length) {
-            socket.emit('joinRoom', this.state.lobby)
-            return true
-        } else return false
+    inRace = (lb, name) => {  
+        let player = lb.filter(p => p.name === name)
+        if(player.length) return true
+        else return false
     }
 
 //Handle Check Change -------------------------------------------------------------------------------
@@ -138,33 +178,127 @@ class Races extends Component {
 
         let newInfo = Object.assign({}, this.state.race)
         let number
-        
         newInfo.leaderboard.forEach((player, i) => player.name === this.state.currentUser.username ?number = i :null)
         newInfo.leaderboard[number].ready = document.getElementById(value).checked;
 
         socket.emit('raceLogic', newInfo, this.state.lobby)
    }
 
-//Time Convert --------------------------------------------------------------------------------------   
-    timeConvert(time){
-      let minutes = moment.duration(time).minutes()
-      let seconds = moment.duration(time).seconds()
-      let mills = moment.duration(time).milliseconds()
-    
-      if (seconds < 10) seconds = "0" + seconds;
-      if (minutes < 10) minutes = "0" + minutes;
-      
-      if(moment.duration(time).minutes() <= 0) return(`${seconds}.${mills / 100}`);
-      else return(`${minutes}:${seconds}`);
-      
+//Time Convert -------------------------------------------------------------------------------------- 
+    timeConvert(time, type){
+
+        let minutes = moment.duration(time).minutes()
+        let seconds = moment.duration(time).seconds()
+        let mills
+        type === 'clock' 
+        ? mills = `.${moment.duration(time).milliseconds()/100}`
+        : mills = `.${moment.duration(time).milliseconds()/10}`
+
+        
+        if (seconds < 10) seconds = `0${seconds}`
+        
+        if(type === 'clock'){
+            if (minutes < 10) minutes = `0${minutes}`
+            if(minutes <= 0) return(`${seconds}${mills}`);
+            else return(`${minutes}:${seconds}`);
+        } else {
+            if (mills == ".0") mills = ''
+            if (minutes < 10) minutes = `${minutes}`
+            if(minutes <= 0) return(`${seconds}${mills}`);
+            else return(`${minutes}:${seconds}${mills}`);
+        }  
     }
 
+//Time Invert ---------------------------------------------------------------------------------------  
+    timeInvert = (time) =>{
+        
+        if(!time)time = "0"
+        let newTime = time.split(":")
+    
+        if(newTime.length === 1) return parseFloat(newTime[0]) * 1000
+        if(newTime.length === 2) return (parseInt(newTime[0] * 60, 10) + parseFloat(newTime[1])) * 1000  
+    }
+
+//Time Input Change ---------------------------------------------------------------------------------  
+    timeInputChange = event => {
+        const {value, name, id} = event.target;
+       
+        let newTimes = Object.assign({}, this.state.levelTimes); 
+            newTimes[name]= value.replace(/[^0-9, :, .]/g, '')
+            newTimes.total = this.timeInvert(newTimes.l1) + this.timeInvert(newTimes.l2) + this.timeInvert(newTimes.l3)
+            newTimes.total = this.timeConvert(newTimes.total)
+        this.setState({levelTimes: newTimes})
+        
+        event.key === "Enter" ? this.timeInputSubmit() : null
+        // splits[id][name] = value.replace(/[^0-9, :, .]/g, '');
+        // this.setState({runSplits: splits});  
+    };
+
+//Time Input Submit --------------------------------------------------------------------------------- 
+    timeInputSubmit = (forfeit) => {
+ 
+        // let test = Object.assign({}, this.state.race)
+        let data = JSON.parse(JSON.stringify(this.state.race))
+
+        let userId; 
+        data.leaderboard.forEach((user, i) => user.name === this.state.currentUser.username ? userId = i : null)
+        
+        forfeit
+        ? data.leaderboard[userId].times.total = forfeit
+        : data.leaderboard[userId].times = this.state.levelTimes
+        
+        data.leaderboard.sort(function compareNumbers(a, b){ 
+            if(a.times.total === "forfeit")  return 1
+            else return this.timeInvert(a.times.total) - this.timeInvert(b.times.total)
+        }.bind(this))
+
+        this.state.race.leaderboard.forEach((player, i)=>{
+            data.leaderboard.forEach((p,a) =>{
+                if(p.name === player.name){
+                    if(i === a){ p.movement = ''; p.direction = ''}
+                    else if(i < a){ p.movement = Math.abs(i - a); p.direction = 'fas fa-arrow-down'}
+                    else { p.movement = Math.abs(i - a); p.direction = 'fas fa-arrow-up'}
+                }
+            })
+        })
+
+        socket.emit('leaderboard', data, this.state.lobby)
+    }
+
+//Show User ----------------------------------------------------------------------------------------- 
+    showUser = (event) => {
+        const {id} = event.target;
+        console.log(`id: ${id}`)
+        this.setState({playerInfo: id, uStyle:{height: "250px", opacity: 1} })
+    }
+
+//Hide User ----------------------------------------------------------------------------------------- 
+    hideUser = () => {this.setState({uStyle:{height: 0, opacity: 0} })}
+
+//Tick Interval -------------------------------------------------------------------------------------
+    tick = () => {
+        let newTime
+        
+        this.state.time === 0
+        ? (clearInterval(this.interval), console.log(`done`))
+        : (
+            newTime = this.state.time -= 100,
+            this.setState({time: newTime,})
+        )     
+    }
+
+    test = () =>{
+        this.state.race.started && !this.state.goTime
+        ? (this.setState({goTime: true}), this.interval = setInterval(() => this.tick(), 100) )
+        : null
+    }
+//Frontend Code ------------------------------------------------------------------------------------- 
     render() {
         return (
             <div>
                 <Nav userInfo={this.state.currentUser}/>
                 <div id="behindNav"></div>
-
+              {this.state.race?this.test():null}
                 <Container fluid>
                     <Row input="left">
                         <Col size="12 md-6">
@@ -173,40 +307,61 @@ class Races extends Component {
                                 sendChat={this.sendChat}
                                 updateChatInput={this.updateChatInput}
                                 check={!this.state.raceCheck}
+                                started={this.state.race ?this.state.race.started:null}
+                                join={this.joinRace}
+                                leave={this.leaveRace}
+                                forfeit={this.forfeitRace} 
+                                forfeitCheck={this.state.forfeitCheck}
+                                ready={this.state.race?this.state.race.ready:null}
                             />
-              
-                            {this.state.raceCheck
-                                ? <button className="btn btn-sm btn-info" onClick={this.leaveRace}> leave </button>
-                                : <button className="btn btn-sm btn-info" onClick={this.joinRace}> join </button>
-                            }
 
-                            { this.state.race.category
-                                ? <LevelInputs levels={this.state.race.levels}/> 
+                            { this.state.race && this.state.raceCheck
+                                ? <LevelInputs 
+                                    levels={this.state.race.levels}
+                                    levelTimes={this.state.levelTimes} 
+                                    style={this.state.race.styles.iStyle}
+                                    started={!this.state.race.started} 
+                                    timeConvert={this.timeConvert} 
+                                    change={this.timeInputChange}
+                                    submit={this.timeInputSubmit}
+                                /> 
                                 : null
                             }
-                           
-                            
+
                             <div className="form-group" value='' onChange={this.handleCheckChange} name="ready" >
-                                <div className="form-check form-check-inline">
-                                    {this.state.raceCheck
-                                        ? <input 
-                                        className="form-check-input"  
-                                        type="checkbox" 
-                                        name="ready" 
-                                        id="readyCheck" 
-                                        disabled={!this.state.raceCheck} 
-                                        value="readyCheck" 
-                                    />
-                                        : null
-                                    }
-                                    <label className="form-check-label"></label>
+                                <div className="form-check form-check-inline"> 
+                                    {   this.state.race
+                                        ? 
+                                        this.state.raceCheck && !this.state.race.ready
+                                            ? <input 
+                                                className="form-check-input"  
+                                                type="checkbox" 
+                                                name="ready" 
+                                                id="readyCheck" 
+                                                disabled={!this.state.raceCheck} 
+                                                value="readyCheck" 
+                                            /> 
+                                            : null
+                                        :null
+                                    } 
+                                    
+                                    <label className="form-check-label"> 
+                                        {   this.state.race
+                                            ?
+                                                this.state.raceCheck && !this.state.race.ready
+                                                ?  `click to be ready`
+                                                :null
+                                            :null
+                                        }
+                                    </label>
                                 </div>
                             </div>     
                         </Col>
                         <Col size="12 md-6" >        
                             <Row>
+                                
                                 <div className="col-12 clb">
-                                    { this.state.race.category
+                                    { this.state.race
                                     ?<Leaderboard 
                                         info={this.state.race.category} 
                                         leaderboard={this.state.race.leaderboard}
@@ -216,12 +371,16 @@ class Races extends Component {
                                         player={this.state.currentUser.username}
                                         styles={this.state.race.styles}
                                         started={this.state.race.started}
-                                        time={this.timeConvert(this.state.race.time)}
+                                        time={this.timeConvert(this.state.time, "clock")}
+                                        playerInfo={this.state.playerInfo}
+                                        show={this.showUser}
+                                        hide={this.hideUser}
+                                        uStyle={this.state.race.leaderboard[this.state.playerInfo] ?this.state.uStyle :{height: 0, opacity: 0}}
                                     />
                                     : null
                                     }
                                 </div> 
-                            </Row>              
+                            </Row>          
                         </Col>
                     </Row>
                 </Container>

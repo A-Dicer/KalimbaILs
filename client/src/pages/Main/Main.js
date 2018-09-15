@@ -39,8 +39,10 @@ class Main extends Component {
     }
 
     loadRaces = () => {
+        console.log("loading races")
         API.getRaces()
             .then(res => { 
+                console.log(res.data.results)
                 // eslint-disable-next-line         
                 res.data.sess.user
                 ? this.setState({currentUser: res.data.sess.user, races: res.data.results}) 

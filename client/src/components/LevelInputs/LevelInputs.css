@@ -8,29 +8,22 @@
     box-shadow: 1px 2px 5px 1px #737272;
     display: flex;
     justify-content: center;
-    margin: 0;
+    margin: 15px 0 -15px;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: height 4000ms, opacity 4000ms; 
 }
 .levelsInput{
-   margin: 5px -15px;
-   padding: 0;
+   margin: 15px -15px;
    text-align: center;
    font-size: 15px;
 }
-.levelsInput > div {
-    
-    
-    /* position: relative; */
-    height: 95px;
-   /* border: solid red 1px; */
-   
-    
-    overflow: hidden;
-}  
+.levelsInput > div {height: 95px; overflow: hidden}  
 
 .levelsInput > div > input {
     position: relative;
-    
-    height: 18px;
+    height: 20px;
     width: 100%; 
     z-index: 3;
     text-align: center;
@@ -69,3 +62,38 @@
     
     text-shadow: 1px 1px 6px #fff;
 }
+
+.inputContainer > div > h2 { 
+    text-align: center;
+    font-family: kalimba;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 6px #fff;
+    padding: 0;
+    padding: 5px;
+    margin: 0;
+}
+
+.inputContainer > div > .row > .col-10 > h4 {
+   
+    text-align: center;
+    font-family: kalimba;
+    margin: 3px 0;
+    padding: 0;
+    text-shadow: 1px 1px 6px #fff;
+    
+}
+
+.inputContainer > div > .row > .col-10 {padding-top: 2px; background: #fff}
+
+.inputContainer > div > .row > .col-2 > button {
+    position: absolute;
+    right: 0;
+    border-left: solid #000 2px;
+    height: 100%;
+    border-radius: 0;
+    background: linear-gradient(to right, rgba(171, 86, 255, 0.317), rgba(128, 2, 255, 0.317));
+}
+
+.inputContainer > div > .row > .col-2 > button:hover {background:rgba(118, 59, 177, 0.6)}
+.inputContainer > div:nth-child(1) {border-bottom: solid #000 2px; background: linear-gradient(to right, rgba(171, 86, 255, 0.317), rgba(171, 86, 255, 0.417))}
+.inputContainer > div:nth-child(3) {border-top: solid #000 2px}

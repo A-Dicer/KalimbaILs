@@ -13,6 +13,7 @@ const Fade = ({ children, ...props }) => (
 const RaceContainer = (props) =>
 
   <div className="row" id="racesRow">
+    {console.log(props)}
     <div className="col-12" id="racesCol">
       { props.races.length ? 'Races Available' : 'No Races Available' }
       <div className="float-right" id="createBtn" onClick={props.create}>
@@ -31,7 +32,7 @@ const RaceContainer = (props) =>
             key = {item._id}
             value= {item._id} 
             difficulty = {item.category.difficulty} 
-            players = {item.players.length} 
+            players = {item.leaderboard.length} 
             time = {item.category.startTime} 
             test = {props.test}
           />

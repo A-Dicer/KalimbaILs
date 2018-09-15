@@ -10,8 +10,7 @@ const raceSchema = new Schema({
       startTime: { type: Number},
   },
   levels: [{ type: Schema.Types.ObjectId, ref: 'Level' }],
-  players: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  leaderboard: { type: Array},
+  leaderboard: {type: Array},
   started: {type: String}
 });
 

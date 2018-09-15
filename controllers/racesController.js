@@ -9,10 +9,6 @@ module.exports = {
       db.Races
         .find(req.query)
         .populate({
-            path: 'players',
-            select: 'userName imgLink email',
-        })
-        .populate({
             path: 'levels',
             select: 'name time difficulty location rank type levelid',
         })
@@ -44,10 +40,10 @@ module.exports = {
 
 //---------------------------- Udate a Race ---------------------------------
   update: function(req, res) {
-    if(req.user){
+      console.log("udating race")
       db.Races.findOneAndUpdate({ _id: req.params.id }, req.body)
         .then(dbModel => res.json(dbModel))
         .catch(err => res.status(422).json(err));
-    } else { res.json({error: "Please login", statusCode: 401})}
+
   }
 };
