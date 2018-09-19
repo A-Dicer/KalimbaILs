@@ -15,7 +15,7 @@ const Welcome = props =>
         <p>
             Once the race starts the levels will be revealed.  When you complete a level you will
             update the time using the form to the left of the leader board.  When you submit your time
-            it will update your time on the leader board for everyone to see. 
+            it will update the leader board for everyone to see. 
         </p>                           
         <p>
             Good luck and have fun!

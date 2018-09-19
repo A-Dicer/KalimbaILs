@@ -10,7 +10,7 @@ router.route("/twitch").get(passport.authenticate("twitch"))
 router.route("/twitch/callback")
 .get(passport.authenticate("twitch", { failureRedirect: "/" }), 
   function(req, res) {
-    res.redirect("/main");
+    res.redirect("http://kalimbril.herokuapp.com:3000/main");
 });
 
 //logout
