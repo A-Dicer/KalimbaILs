@@ -15,7 +15,7 @@ class Login extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-      window.location = "http://kalimbril.herokuapp.com/api/auth/twitch/callback"; 
+      window.location = "/api/auth/twitch/callback"; 
    
   };
 

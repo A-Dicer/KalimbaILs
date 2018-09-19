@@ -3,8 +3,8 @@ const app = express();
 const moment = require("moment");
 const axios = require("axios");
 
-function updateRace(id, info){ return axios.put("http://kalimbril.herokuapp.com:3001/api/races/" + id, info) }
-function getRaces(){return axios.get("http://kalimbril.herokuapp.com:3001/api/races/")}
+function updateRace(id, info){ return axios.put("/api/races/" + id, info) }
+function getRaces(){return axios.get("/api/races/")}
 
 exports = module.exports = function(io) {  
     // Set socket.io listeners.
