@@ -24,7 +24,7 @@ class Overlay extends Component {
                     this.setState({goTime: true})
                     this.interval = setInterval(() => this.tick(), 100)
                 }  
-            }
+            } else clearInterval(this.interval)
         })   
     }
 
