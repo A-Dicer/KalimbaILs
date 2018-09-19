@@ -17,7 +17,7 @@ class Overlay extends Component {
         socket.on(this.props.match.params.id, (data) => { 
             if(this.data)this.setState({kaliTitle: {opacity: 0}, data: data})
             else this.setState({kaliTitle: {opacity: 1}, data: data})
-            if(this.state.race){
+            if(this.state.data.race){
                 if(this.state.data.race.started && !this.state.goTime){
                     this.setState({goTime: true})
                     this.interval = setInterval(() => this.tick(), 100)
