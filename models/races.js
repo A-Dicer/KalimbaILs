@@ -7,11 +7,11 @@ const raceSchema = new Schema({
       difficulty: { type: String },
       location: { type: Array },
       boss: { type: Boolean },
-      startTime: { type: Number},
   },
   levels: [{ type: Schema.Types.ObjectId, ref: 'Level' }],
   leaderboard: {type: Array},
-  started: {type: String}
+  started: {type: String},
+  done: {type: String}
 });
 
 const Races = mongoose.model("Races", raceSchema);

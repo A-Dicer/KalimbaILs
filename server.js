@@ -1,6 +1,5 @@
 const express        = require("express");
 const bodyParser     = require("body-parser");
-
 const passport       = require("passport");
 const twitchStrategy = require("passport-twitch").Strategy;
 const configAuth = require('./config/twitchAuth.js');
@@ -37,7 +36,6 @@ passport.use( new twitchStrategy({
     User.findOrCreate(
       {twitchId: profile.id}, 
       {username: profile.displayName, imgLink: profile._json.logo, email: profile.email}, 
-      {inRace: "5b7e2528749a6c17c0cb6fb7"},
       function (err, user) { return done(err, user) }
     );
   }
@@ -56,7 +54,6 @@ mongoose.connect(
   process.env.MONGODB_URI || "mongodb://localhost/kalimbaILsDB",
   { useMongoClient: true }
 );
-
 
 // Start the API server
 const server = app.listen(PORT, function(err) {  

@@ -1,11 +1,10 @@
 import React from "react";
 import Icon from "../../components/Icon";
-import Stars from "../../components/Stars";
-import { Container, Row, Col } from "../../components/Grid";
+import {Row, Col} from "../../components/Grid";
 
 import "./LevelInputs.css"
 
-const LevelInputs = ({levels, style, started, change, submit, levelTimes}) =>     
+const LevelInputs = ({levels, style, check, change, submit, levelTimes}) =>     
       
     <div className="row inputContainer" style={style}>
         <Col size="12">
@@ -27,7 +26,7 @@ const LevelInputs = ({levels, style, started, change, submit, levelTimes}) =>
                             onChange={change}
                             maxLength="8"
                             onKeyPress={change}
-                            disabled={started}
+                            disabled={check}
                         />
                        
                     </Col>
@@ -46,7 +45,7 @@ const LevelInputs = ({levels, style, started, change, submit, levelTimes}) =>
                     </h4> 
                 </Col>
                 <Col size="2">
-                    <button className="btn btn-sm btn-info" onClick={submit}>update</button>
+                    <button className="btn btn-sm" onClick={submit} disabled={check}>update</button>
                 </Col>
             </Row>         
         </Col>

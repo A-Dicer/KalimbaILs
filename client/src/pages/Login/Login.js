@@ -11,30 +11,11 @@ class Login extends Component {
     currentUser: ""
   };
 
-  componentWillMount() {
-    API.logout()
-      .catch(err => console.log(err))
-  }
-  // handleInputChange = event => {
-  //   const { name, value } = event.target;
-  //   this.setState({
-  //     [name]: value
-  //   });
-  // };
+  componentWillMount() {API.logout().catch(err => console.log(err))}
 
   handleFormSubmit = event => {
     event.preventDefault();
-    
-      console.log("twitchAuth started")
-      window.location = "http://localhost:3001/api/auth/twitch"; 
-      
-      // API.twitchAuth().then(console.log("start"))
-      
-          // if (res.request.responseURL) {
-          //   window.location = res.request.responseURL;    
-          // }
-          // else {
-          //   console.log("didn't work");
+      window.location = "http://kalimbril.herokuapp.com/api/auth/twitch/callback"; 
    
   };
 

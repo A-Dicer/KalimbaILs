@@ -7,7 +7,6 @@ import { Container, Row, Col } from "../../components/Grid";
 import Leaderboard from "../../components/Leaderboard";
 import LevelInputs from "../../components/LevelInputs";
 import "./Races.css";
-import { isNullOrUndefined } from "util";
 
 const io = require('socket.io-client')  
 const socket = io() 
@@ -18,32 +17,58 @@ class Races extends Component {
         super(props);
         this.state = {
             uStyle: {},
+            lStyle: true,
             playerInfo: 0,
             time: null,
             levelTimes:{ total: '', l1: '', l2: '', l3: ''},
             raceCheck: false,
-            forfeitCheck: false, //not sure I need this 
             currentUser: [],
             chatBox: {msg: [], chat: [],chatInput: ""},
             lobby: this.props.match.params.id,    
         }
 
-        socket.on(this.state.lobby, (data) => this.setState({race: data}))   
+        socket.on(this.state.lobby, (data) => {
+            this.setState({race: data})
+            if(this.state.race.started && !this.state.goTime){
+                this.setState({goTime: true}) 
+                this.interval = setInterval(() => this.tick(), 100) 
+            }
+
+            socket.emit('raceCreated')
+            socket.emit('overlay', this.state, this.state.currentUser.username)       
+        }) 
+       
         socket.on(`chat${this.state.lobby}`, (data) => {
             let chatBox = Object.assign({}, this.state.chatBox);      
                 chatBox.chat.push(data)
             this.setState({chatBox: chatBox})
         })
+
+        socket.on(`done`, (data) => {
+            let info = Object.assign({}, this.state.race);      
+                info.done = data 
+            this.setState({race: info})
+        })
     }
 
     // when component mounts get race info
-    componentDidMount() { this.loadRace(this.props.match.params.id), socket.emit('joinRoom', this.state.lobby)}
-    componentWillUnmount() {clearInterval(this.interval), socket.emit('leaveRoom', this.state.lobby) }
+    componentDidMount() {
+        this.loadRace(this.props.match.params.id) 
+        socket.emit('joinRoom', this.state.lobby)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval) 
+        socket.emit('leaveRoom', this.state.lobby) 
+    }
 
 //load races from api -------------------------------------------------------------------------------
     loadRace = (raceId) => {
         API.getRaceID(raceId)
             .then(res => { 
+                // eslint-disable-next-line
+                res.data.sess && res.data.sess.user ? null : this.props.history.push("/")
+                
                 const disLev = {
                     "_id": "", "levelid": "0", "name": "???", 
                     "location": "", "difficulty": "", "rank": "", 
@@ -53,10 +78,8 @@ class Races extends Component {
                 let inRace = this.inRace(res.data.results.leaderboard, res.data.sess.user.username)
                 
                 let race = Object.assign({}, this.state.race)
-                    
-                    race.started = res.data.results.started,
-                    
-                    
+                    race.started = res.data.results.started
+                    race.done = res.data.results.done
                     race.raceID = this.state.lobby
                     race.leaderboard = res.data.results.leaderboard
                     race.levels = res.data.results.levels
@@ -67,13 +90,11 @@ class Races extends Component {
                     race.styles = { 
                         lvStyle: race.started ? {height: "110px", opacity: 1} : null, 
                         lbStyle: {}, 
-                        tStyle: race.started ? {height: "100px", opacity: 1} : null, 
+                        tStyle: race.started ? {height: "60px", opacity: 1} : null, 
                         iStyle: inRace && race.started ? {height: "438px", opacity: 1} : null, 
                     }
-                    
                     race.time = 0
-
-                    race.started ? race.levels.forEach((level, i) => race.disLev[i] = level) : isNullOrUndefined
+                    if(race.started) race.levels.forEach((level, i) => race.disLev[i] = level)
                     race.levels.forEach((level)=> race.time += level.time) 
                     race.ready = (res.data.results.started ? true : false)
 
@@ -91,6 +112,15 @@ class Races extends Component {
                     
                 this.setState({raceCheck: inRace})
                 this.setState({currentUser: res.data.sess.user, race: race, time: race.time, levelTimes: levelTimes}) 
+                
+                
+               
+                if(this.state.race.started && !this.state.goTime){
+                    this.setState({goTime: true}) 
+                    this.interval = setInterval(() => this.tick(), 100) 
+                }
+
+                socket.emit('overlay', this.state, this.state.currentUser.username) 
             }
         ).catch(err => console.log(err));
     }
@@ -137,9 +167,9 @@ class Races extends Component {
        
         //send new leaderboard info to socket and DB
         this.setState({raceCheck: true})
-        socket.emit('raceLogic', newInfo, this.state.lobby)
+        socket.emit('joinRoom', this.state.lobby)
+        socket.emit('leaderboard', newInfo, this.state.lobby)
         socket.emit('sendChat', {player: "Hoebear", message: this.state.currentUser.username + " has joined"}, this.state.lobby)
-        API.updateRace(this.state.lobby, {leaderboard: newInfo.leaderboard}).catch(err => console.log(err))
     }
 
 //Leave Race ----------------------------------------------------------------------------------------
@@ -149,18 +179,14 @@ class Races extends Component {
         newInfo.leaderboard = data
 
         this.setState({raceCheck: false})
-        socket.emit('leaveRoom', this.state.lobby)
-        socket.emit('raceLogic', newInfo, this.state.lobby)
+        
+        socket.emit('leaderboard', newInfo, this.state.lobby)
         socket.emit('sendChat', {player: "Hoebear", message: this.state.currentUser.username + " has left"}, this.state.lobby)
-        API.updateRace(this.state.lobby, {leaderboard: newInfo.leaderboard}).catch(err => console.log(err))
     }
 
 //Forfeit Race --------------------------------------------------------------------------------------
     forfeitRace = () => {
-        let data = Object.assign({}, this.state.race.leaderboard)
-        this.timeInputSubmit("forfeit")
-        this.setState({raceCheck: false, forfeitCheck: true})
-        
+        this.setState({raceCheck: false})
         socket.emit('sendChat', {player: "Hoebear", message: this.state.currentUser.username + " forfeited!"}, this.state.lobby)
         this.leaveRace()
     }
@@ -193,17 +219,16 @@ class Races extends Component {
         type === 'clock' 
         ? mills = Math.floor(moment.duration(time).milliseconds()/100)
         : mills = Math.floor(moment.duration(time).milliseconds()/10)
-
-        
+   
         if (seconds < 10) seconds = `0${seconds}`
         
         if(type === 'clock'){
-            if (mills == "0") mills = 0
+            if (mills === 0) mills = 0
             if (minutes < 10) minutes = `0${minutes}`
             if(minutes <= 0) return(`${seconds}.${mills}`);
             else return(`${minutes}:${seconds}`);
         } else {
-            if (mills == "0") mills = ''
+            if (mills === 0) mills = ''
             else mills = `.${mills}`
             if (minutes < 10) minutes = `${minutes}`
             if(minutes <= 0) return(`${seconds}${mills}`);
@@ -223,7 +248,7 @@ class Races extends Component {
 
 //Time Input Change ---------------------------------------------------------------------------------  
     timeInputChange = event => {
-        const {value, name, id} = event.target;
+        const {value, name} = event.target;
        
         let newTimes = Object.assign({}, this.state.levelTimes); 
             newTimes[name]= value.replace(/[^0-9, :, .]/g, '')
@@ -231,25 +256,18 @@ class Races extends Component {
             newTimes.total = this.timeConvert(newTimes.total)
         this.setState({levelTimes: newTimes})
         
-        event.key === "Enter" ? this.timeInputSubmit() : null
+        if(event.key === "Enter" && !this.state.race.done) this.timeInputSubmit()
     };
 
 //Time Input Submit --------------------------------------------------------------------------------- 
-    timeInputSubmit = (forfeit) => {
- 
-        // let test = Object.assign({}, this.state.race)
+    timeInputSubmit = () => {
         let data = JSON.parse(JSON.stringify(this.state.race))
-
         let userId; 
+
         data.leaderboard.forEach((user, i) => user.name === this.state.currentUser.username ? userId = i : null)
-        
-        forfeit
-        ? data.leaderboard[userId].times.total = forfeit
-        : data.leaderboard[userId].times = this.state.levelTimes
-        
+        data.leaderboard[userId].times = this.state.levelTimes
         data.leaderboard.sort(function compareNumbers(a, b){ 
-            if(a.times.total === "forfeit")  return 1
-            else return this.timeInvert(a.times.total) - this.timeInvert(b.times.total)
+           return this.timeInvert(a.times.total) - this.timeInvert(b.times.total)
         }.bind(this))
 
         this.state.race.leaderboard.forEach((player, i)=>{
@@ -268,12 +286,21 @@ class Races extends Component {
 //Show User ----------------------------------------------------------------------------------------- 
     showUser = (event) => {
         const {id} = event.target;
-        console.log(`id: ${id}`)
         this.setState({playerInfo: id, uStyle:{height: "250px", opacity: 1} })
+        setTimeout(function(){socket.emit('overlay', this.state, this.state.currentUser.username)}.bind(this), 200)
     }
 
 //Hide User ----------------------------------------------------------------------------------------- 
-    hideUser = () => {this.setState({uStyle:{height: 0, opacity: 0} })}
+    hideUser = () => {
+        this.setState({uStyle:{height: 0, opacity: 0} })
+        setTimeout(function(){socket.emit('overlay', this.state, this.state.currentUser.username)}.bind(this), 200)   
+    }
+
+//Level Vision -------------------------------------------------------------------------------------- 
+    levelVision = () => {
+        this.setState({lStyle: !this.state.lStyle})
+        setTimeout(function(){socket.emit('overlay', this.state, this.state.currentUser.username)}.bind(this), 200)
+    }
 
 //Tick Interval -------------------------------------------------------------------------------------
     tick = () => {
@@ -281,23 +308,19 @@ class Races extends Component {
         let startTime = moment(this.state.race.started)
         let time = this.state.race.time - newTime.diff(startTime, 'milliseconds')
         
-        time <= 0
-        ? (clearInterval(this.interval), console.log(`done`), this.setState({time: 0}))
-        : this.setState({time: time})  
+        if(time <= 0){clearInterval(this.interval); this.setState({time: 0})} 
+        else  this.setState({time: time})  
     }
 
-    test = () =>{
-        this.state.race.started && !this.state.goTime
-        ? (this.setState({goTime: true}), this.interval = setInterval(() => this.tick(), 100) )
-        : null
-    }
+    // test = () =>{
+    //     
+    // }
 //Frontend Code ------------------------------------------------------------------------------------- 
     render() {
         return (
             <div>
                 <Nav userInfo={this.state.currentUser}/>
                 <div id="behindNav"></div>
-              {this.state.race?this.test():null}
                 <Container fluid>
                     <Row input="left">
                         <Col size="12 md-6">
@@ -310,8 +333,8 @@ class Races extends Component {
                                 join={this.joinRace}
                                 leave={this.leaveRace}
                                 forfeit={this.forfeitRace} 
-                                forfeitCheck={this.state.forfeitCheck}
                                 ready={this.state.race?this.state.race.ready:null}
+                                done={this.state.race?this.state.race.done:null}
                             />
 
                             { this.state.race && this.state.raceCheck
@@ -319,7 +342,8 @@ class Races extends Component {
                                     levels={this.state.race.levels}
                                     levelTimes={this.state.levelTimes} 
                                     style={this.state.race.styles.iStyle}
-                                    started={!this.state.race.started} 
+                                    check={!this.state.race.started || this.state.race.done ? true : false}
+                                    done={this.state.race.done}
                                     timeConvert={this.timeConvert} 
                                     change={this.timeInputChange}
                                     submit={this.timeInputSubmit}
@@ -348,7 +372,7 @@ class Races extends Component {
                                         {   this.state.race
                                             ?
                                                 this.state.raceCheck && !this.state.race.ready
-                                                ?  `click to be ready`
+                                                ?  `I'm ready`
                                                 :null
                                             :null
                                         }
@@ -370,10 +394,13 @@ class Races extends Component {
                                         player={this.state.currentUser.username}
                                         styles={this.state.race.styles}
                                         started={this.state.race.started}
+                                        ready={this.state.race.ready}
                                         time={this.timeConvert(this.state.time, "clock")}
                                         playerInfo={this.state.playerInfo}
                                         show={this.showUser}
                                         hide={this.hideUser}
+                                        lStyle={this.state.race.started ? this.state.lStyle ? {height: "110px"} : {height: 0}: false}
+                                        levelVision={this.levelVision}
                                         uStyle={this.state.race.leaderboard[this.state.playerInfo] ?this.state.uStyle :{height: 0, opacity: 0}}
                                     />
                                     : null

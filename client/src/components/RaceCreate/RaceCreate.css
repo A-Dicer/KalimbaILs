@@ -1,33 +1,6 @@
 
-
-#icon1 {
-    position: absolute; 
-    right: -3px; 
-    top: -8px; 
-    color: #fff
-}
-
-#icon2 {
-    background: #fff; 
-    padding: 0 3px; 
-    margin: 6px 0; 
-    height: 37px; 
-    z-index: 1; 
-    font-size: 13px
-}
-
-#racesCol {
-    padding: 0;
-}
-
-hr {
-    margin: 2px 0 10px
-}
-
-.raceBtn {
-    margin: 3px 0;
-    padding: 0;
-}
+#racesCol {padding: 0}
+.raceBtn {margin: 3px 0; padding: 0}
 
 #levelAmount {
     position: relative;
@@ -37,10 +10,22 @@ hr {
     color: green;
 }
 
-#time, #location, #difficulty {
-    color: rgb(255, 0, 0)
-}
+#time, #location, #difficulty {color: rgb(255, 0, 0)}
+.test:disabled {background-color: rgb(106, 0, 0)}
 
-.test:disabled {
-    background-color: rgb(106, 0, 0);
+#leftRow > .col-12 {padding: 0}
+#leftRow > .col-12 > form > div { padding: 0 15px}
+#leftRow > .col-12 > form > div:nth-child(1) { 
+    background: linear-gradient(to right, rgba(171, 86, 255, 0.317), rgba(171, 86, 255, 0.417));
+    padding: 5px 15px 0;
+    margin-bottom: 15px;
+    height: 45px;
+    border-bottom: solid #000 2px;
+    
 }
+#leftRow > .col-12 > form > div:nth-child(1) > h3 { padding: 0}
+
+.circleIcon {font-size: 15px; position: absolute; top: 12px; right: 5px; text-shadow: none}
+.circleIcon:hover {cursor: pointer; color: rgb(106, 0, 0)}
+
+label {padding-top: 5px; height: 25px}

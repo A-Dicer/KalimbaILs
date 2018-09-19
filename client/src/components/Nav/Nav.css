@@ -12,16 +12,18 @@ nav {
 #brandLogo {
     margin: 0; 
     padding: 0; 
-    width: 100px; 
+    width: 278px; 
     position: absolute; 
-    left: 0; 
-    top: -29px;
+    left: 15px; 
+    top: 3px;
 }
 
 #userRow {
     width:270px;  
     padding: 0; 
-    margin: 0;
+    margin: 0 -15px 0;
+    position: absolute;
+    right: 20px;
 }
 
 #logOut {
@@ -34,10 +36,12 @@ nav {
 
 #raceStatus {
     font-size: 13px;
+    padding:0 3px;
 }
 
 #userName {
     height: 19px;
+    padding:0 3px;
 }
 
 #userImg {

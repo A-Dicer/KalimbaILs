@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import API from "../../utils/API";
-import moment from "moment";
-import { TimeSelect, Radio, Checkbox } from "../../components/Form";
+import {Radio, Checkbox} from "../../components/Form";
 import Icon from "../../components/Icon";
 import "./RaceCreate.css";
 const io = require('socket.io-client')  
@@ -86,39 +85,6 @@ class RaceCreate extends Component {
     };
 
 
-//handle clock selection change ------------------------------------------------------
-  handleClockChange = event => {
-
-    let time = {
-      hour: document.getElementById('hour').value, 
-      minute: document.getElementById('minute').value, 
-      part: document.getElementById('part').value,
-      day: moment().format("D")
-    };
-    // eslint-disable-next-line
-    if (time.part === "PM" && time.hour < 12) time.hour = parseInt(time.hour) + 12;
-    if (time.part === "AM" && time.hour === "12") time.hour = "0"
-    
-    let raceTime = moment(time);
-
-    if(time.hour === '0'){
-      if(moment().subtract(1, 'hour').format('H') !== "23"){
-        raceTime = moment(time).add(1, 'day');
-      }
-    }; 
-    // eslint-disable-next-line
-    moment().isBefore(moment(raceTime))
-    ? (
-      this.setState({time: raceTime.valueOf()}),
-      this.validCheck("time", "green")
-    )
-    :( 
-      this.setState({time: ''}),
-      this.validCheck("time", "red")
-    )
-    
-  };
-
   //handle radio selection change ------------------------------------------------------
   handleInputChange = event => {
     const { name, value } = event.target;
@@ -173,7 +139,6 @@ socket.emit('race created', this.props.races)
   handleFormSubmit = event => {
     event.preventDefault();
     let filtered = this.state.filter;
-    let time = true;
     let random
     let levels = [];
 
@@ -191,44 +156,28 @@ socket.emit('race created', this.props.races)
         // eslint-disable-next-line
         filtered = filtered.filter(param => param['_id'] !== filtered[random]._id)
       )  
-        : console.log('not enough levels to pick from')  
+        : null
     }
-    //make sure to much time hassn't passed since time select
-    // eslint-disable-next-line
-    moment().isBefore(moment(this.state.time))
-    ? console.log("the time is still good")
-    : (
-      time = false, 
-      this.setState({time: ''}),
-      this.validCheck("time", "red")
-    )
 
     //update server
-    if ((levels.length === 3) && time) {
+    if ((levels.length === 3)) {
       //create the new race data to submit
       const raceData = {
                 category: {
                 difficulty: this.state.difficulty,
                 location: this.state.location,
                 boss: this.state.boss,
-                startTime: this.state.time
               },
               levels: levels,
-              messages: [],
-              raceInfo: []
             }
       //send the data to the server
       API.saveRace(raceData)
-        .then(
-          //reload the races inforamation sent from server
-          (res => this.props.loadRaces()),
-          console.log('created race'),
-          //send new races data to everyone else connected with socket.io
-          setTimeout(this.racesUpdate , 100), 
-          setTimeout(this.props.raceBtn, 500)          
-        ) 
-        .catch(err => console.log(err));
-    } else console.log("did not create race")
+        .then((() => { 
+          socket.emit('raceCreated')
+          this.props.cancel()
+        })    
+        ).catch(err => console.log(err));
+    } 
   };
 
 
@@ -240,14 +189,13 @@ socket.emit('race created', this.props.races)
 // render -------------------------------------------------------------------------------------
 render() {
   return (
-      <div className="col-12" style={{margin: 5}}>
+      <div className="col-12" >
         <form>
-          <div className="form-group" value={this.state.difficulty} onChange={this.handleClockChange} name="time" >
-            <label id="time"><Icon id="fa fa-clock-o"/> Select Start Time</label>
-            <TimeSelect />    
+          <div className="title" id="racesRow">
+            <h3> <Icon id="fas fa-edit"/> Create Race </h3>
+            <icon className="fas fa-times-circle circleIcon"  onClick={this.props.cancel}/>   
           </div>
-
-          <hr />
+       
           <div className="form-group " htmlFor="difficulty" value={this.state.difficulty} onChange={this.handleInputChange} name="difficulty" >
             <label id="difficulty"><Icon id="fa fa-flask"/> Select By Difficulty</label>
             <br />
@@ -259,7 +207,7 @@ render() {
             <Radio id="Very Hard"/>
           </div>
 
-          <hr />
+        
           <div className="form-group" value={this.state.difficulty} onChange={this.handleCheckChange} name="location">
             <label id="location">
                 <Icon id="fa fa-globe"/> Select By Location 
@@ -271,7 +219,7 @@ render() {
             <Checkbox id="InnerWorld"/><Checkbox id="InnerVoid"/>
             
           </div>
-          <hr />
+          
           <div className="form-group" value={this.state.difficulty} onChange={this.handleCheckChange} name="boss">
             <div className="form-check form-check-inline">
               <input className="form-check-input" type="checkbox" id="boss" name="boss"  value="boss"/>
@@ -279,7 +227,7 @@ render() {
             </div>
           </div>
           <div>
-          <button type="submit" className="btn test btn-secondary btn-sm float-right"  disabled={!((this.state.difficulty || this.state.locArr.length) && this.state.time && this.state.filter.length)}
+          <button type="submit" className="btn test btn-secondary btn-sm float-right"  disabled={!((this.state.difficulty || this.state.locArr.length) && this.state.filter.length)}
                   onClick={this.handleFormSubmit}>Create Race</button>
           <p id="levelAmount"><Icon id="fa fa-cogs" /> Selecting from {this.state.filter.length} Levels</p>
           </div>       

@@ -1,42 +1,49 @@
-#racesRow {
-    margin: 5px 6px 5px; 
-    width: 100%;
-    background: #fff; 
-    border-radius: 5px; 
-}
-#createBtn { 
-    cursor: pointer;
-}
+#racesRow {padding: 0 15px; transition: opacity 1000ms}
+#createBtn {cursor: pointer; position: absolute; top: 12px; right: 5px; text-shadow: none}
 
-/* #racesCol {
-    padding: 0;
-} */
 
-hr {
-    margin: 2px 0 10px
+#racesCol {
+    background: linear-gradient(to right, rgba(171, 86, 255, 0.317), rgba(171, 86, 255, 0.417)); 
+    height: 45px;
+    margin: 0;
+    border-bottom: solid #000 2px;
 }
 
-.raceBtns {
-    padding: 0px;
-}
+#racesCol > h3 {padding: 5px 15px 0; margin: 0; height: 45px}
 
-.raceBtn {
-    
-    
-}
+.locBtn {width: 15px; margin: 0 2px; position: relative; top: -2px; border: solid #ccc 1px }
+.raceBtns {padding: 15px}
 
-.btn-xs {
+.raceBtns > .col-12 > button {
+    background: linear-gradient(to right, rgba(171, 86, 255, 0.317), rgba(171, 86, 255, 0.417));
+    height: 30px;
+    padding: 5px 0;
+    z-index: 0;
     box-shadow: 1px 1px 1px 0px #737373;
-    margin-bottom: 5px;
-    padding: 0;
 }
+.raceBtns > .col-12 > button.btn:hover,
+.raceBtns > .col-12 > button.btn:active {
+    background: linear-gradient(to right, rgba(125, 61, 189, 0.317), rgba(125, 61, 189, 0.417))
+}
+
+.raceBtns > .col-12 > button.started {
+    background: linear-gradient(to right,  rgba(157, 157, 157, 0.317), rgba(169, 169, 169, 0.317))
+}
+
+.raceBtns > .col-12 > button.started:hover,
+.raceBtns > .col-12 > button.started:active{
+    background: linear-gradient(to right,  rgba(121, 121, 121, 0.317), rgba(140, 140, 140, 0.317))
+}
+.raceBtns > .col-12 > button:disabled {background: #ccc}
+.raceBtns > .col-12 > button:disabled:hover {background: #ccc}
+
 .fade-enter {
   opacity: 0.01;
 }
 
 .fade-enter.fade-enter-active {
   opacity: 1;
-  transition: opacity 1000ms ease-in;
+  transition: opacity 2000ms ease-in;
 }
 
 .fade-exit {
@@ -45,5 +52,5 @@ hr {
 
 .fade-exit.fade-exit-active {
   opacity: 0.01;
-  transition: opacity 800ms ease-in;
+  transition: opacity 2000ms ease-in;
 }

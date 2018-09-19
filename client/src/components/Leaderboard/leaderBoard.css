@@ -20,30 +20,57 @@
     text-shadow: 1px 1px 5px rgb(240, 240, 240);
 }
 
-
 .lb > .col-12 { overflow: hidden; transition: height 2000ms, opacity 200ms}
 
 /* Hoebear */
-.lb > .col-12:nth-child(1) { 
-    /* border: solid #000 1px; */
-    height: 0px;
-    opacity: 0; 
-
-} 
-
+.lb > .col-12:nth-child(1) {height: 0px; opacity: 0} 
+.lb > .col-12:nth-child(1) > .row > .col-5 > img {
+    position: absolute;
+    top: 0;
+    left: 0px;
+    height: 141px;
+    border-right: solid #000 2px;}
+    
 .lb > .col-12:nth-child(1) > .row > .col-7 {
-    display: flex;
-    align-items: center;
+    height: 110px; 
+    display: flex; 
+    align-items: center; 
     justify-content: center;
 }
 
-.lb > .col-12:nth-child(1) > .row > .col-7 > .row > .col-12 > img{ 
+/* Timer */
+.lb > .col-12:nth-child(1) > .row > .col-7 > .row > .timer{
+    height: 0; 
+    opacity: 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px; 
+    color: rgb(157, 107, 208); 
+    text-shadow: 2px 2px 2px rgb(88, 88, 88);
+    transition: opacity 4000ms, height 2000ms
+} 
+
+.lb > .col-12:nth-child(1) > .row > .col-7 > .row > div > .col-12 > img { 
     position: relative;
     margin-right: 2px;
     top: -2px;
     left: 4px;
     width: 15px;
     box-shadow: 1px 1px 1px rgb(90, 90, 90)
+}
+
+.lb > .col-12:nth-child(1) > .row > .col-7 > .row > .col-12 > .title{ 
+    position: relative;
+    margin-right:0;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    top: 0;
+    left: -1px;
+    width: 180px;
+    box-shadow: none;
+    border-bottom: solid #000 1px;
+
 }
 
  /* Levels */
@@ -56,6 +83,9 @@
     border-top: solid #000 2px;
     border-bottom: solid #000 2px;
 }
+.lb > .col-12:nth-child(2) > .row:hover > i {opacity: 1}
+.lb > .col-12:nth-child(2) > .row > i {position: absolute; right: 5px; bottom: 0; opacity: 0; z-index: 3; cursor: pointer; font-size: 12px}
+.lb > .col-12:nth-child(2) > .row > i:hover {color: #fff}
 .lb > .col-12:nth-child(2) > .row > .col-4 {margin-top: -3px; text-align: center; padding: 0 1px; font-size: 15px; overflow: hidden}
 .col-4 > .container > .row > .col-12  {padding: 0}
 .col-4 > .container > .row > .col-12 > img { padding: 0; margin: 0}
@@ -68,40 +98,29 @@
     color: #000;
 }
 
-/* Timer */
-.lb > .col-12:nth-child(3) { 
-    height: 0; 
-    opacity: 0; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 50px; 
-    color: rgb(157, 107, 208); 
-    text-shadow: 2px 2px 2px rgb(88, 88, 88);
-} 
-.lb > .col-12:nth-child(3) > .row > .col-12 { border-bottom: solid #000 1px}
-
 /* Leaderboard */
-.lb > .col-12:nth-child(4) {opacity: 1; margin: 15px 0}
-.leaderboard > .col-12 {padding: 0; height: 38px; display: flex; align-items: center}
-
+.lb > .col-12:nth-child(3) {opacity: 1; margin: 15px 0; height: 200px}
+.leaderboard > .lbNumber > .col-12 {
+    padding: 0; 
+    text-align: right; 
+    height: 38px;
+    width: 23px; 
+}
+.leaderboard > .lbNumber { position: absolute; top: 9px; left: 8px}
 .leaderboard > button {
     border: solid #000 1px;
     border-radius: 0;
-    top: 0px;
+    margin: 4px 0;
     padding: 0;
-    position: absolute; 
-    left: 35px;
+    position: relative;
+    right: -20px;
     width: 300px;
     height: 30px;
     overflow: hidden;
     color: #000;
-    transition: top 2000ms;
     z-index: 2;
 }
 .leaderboard > button:active {background: #fff}
-
-.leaderboard > .forfeit {background: rgb(210, 138, 138)}
 .clickable {
     width: 100%;
     height: 100%;
@@ -109,10 +128,8 @@
     z-index: 2;
     top: 0;
 }
-
 .player {background: linear-gradient(to right,  rgb(191, 228, 233), rgb(128, 159, 164))}
 .otp {background: linear-gradient(to right, #ccc, rgb(118, 118, 118))}
-
 button > .row {
     display: flex;
     align-items: center;
@@ -138,7 +155,7 @@ button > .row > .col-2 > img {
 }
 
 /* User info */
-.lb > .col-12:nth-child(5) {
+.lb > .col-12:nth-child(4) {
     /* border: solid red 1px; */
     border-top: solid #000 2px;
     background: #fff;
@@ -146,7 +163,6 @@ button > .row > .col-2 > img {
     opacity: 0;
     transition: opacity 2000ms, height 2000ms;
 }
-
 .playerInfo > div:nth-child(1) {overflow: hidden; height: 50px; padding: 0}
 .playerInfo > div:nth-child(1) > img {
     width: 100%;
@@ -163,7 +179,7 @@ button > .row > .col-2 > img {
     right: 5px;
     top: 5px;
     color: #fff;
-    font-size: 20px;
+    font-size: 16px;
     text-shadow: none
 } 
 .playerInfo > div:nth-child(1) > i:hover {color: #ccc; cursor: pointer}

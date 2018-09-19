@@ -37,7 +37,7 @@
 }
 .levelsInput > div > h4 {
     position: relative;
-    font-size: 20px;
+    font-size: 19px;
     z-index: 3;
     margin-bottom: -2px ;
     font-family: kalimba;
@@ -64,14 +64,16 @@
 
 .inputContainer > div > .row > .col-10 {padding-top: 2px; background: #fff}
 .inputContainer > div > .row > .col-2 > button {
+    color: #fff;
     position: absolute;
     right: 0;
     border-left: solid #000 2px;
     height: 100%;
     border-radius: 0;
-    background: linear-gradient(to right, rgba(171, 86, 255, 0.317), rgba(128, 2, 255, 0.317));
+    background: rgba(128, 2, 255, 0.317);
+    transition: background 500ms
 }
-
 .inputContainer > div > .row > .col-2 > button:hover {background:rgba(118, 59, 177, 0.6)}
+.inputContainer > div > .row > .col-2 > button:disabled {background:rgba(128, 2, 255, 0.317); color: rgba(128, 2, 255, 0)}
 .inputContainer > div:nth-child(1) {border-bottom: solid #000 2px; background: linear-gradient(to right, rgba(171, 86, 255, 0.317), rgba(171, 86, 255, 0.417))}
 .inputContainer > div:nth-child(3) {border-top: solid #000 2px}

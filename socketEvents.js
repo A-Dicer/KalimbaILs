@@ -3,7 +3,8 @@ const app = express();
 const moment = require("moment");
 const axios = require("axios");
 
-function updateRace(id, info){ return axios.put("http://localhost:3001/api/races/" + id, info) }
+function updateRace(id, info){ return axios.put("/api/races/" + id, info) }
+function getRaces(){return axios.get("/api/races")}
 
 exports = module.exports = function(io) {  
     // Set socket.io listeners.
@@ -46,81 +47,92 @@ exports = module.exports = function(io) {
           }
         }
 
-        
+        //Race Done -----------------------------------------------------------
+        raceDone = (raceId) => {
+          let done = new moment()
+          updateRace(raceId, {done: done}).catch(err => console.log(err)) 
+          io.in(`room${raceId}`).emit(`chat${raceId}`, {player: hb, message: "Done"})   
+          io.in(`room${raceId}`).emit("done", done) 
+          sendRaceUpdate() 
+        }
 
         //Race Starts ----------------------------------------------------------
         race = () => {
-          console.log("race started")
-          let timeTest = 0
+          let raceTime = 0
 
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[0]})}, timeTest)
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[0]})}, raceTime)
 
-          timeTest += 2000
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[1]})}, timeTest)
+          raceTime += 2000
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[1]})}, raceTime)
 
-          timeTest += 1000
+          raceTime += 1000
           setTimeout(function(){
             data.styles.lvStyle = {height: "110px"}
             io.in(`room${id}`).emit(id, data)  
-          }, timeTest)
+          }, raceTime)
 
-          timeTest += 2000
+          raceTime += 2000
           let randomTime = Math.floor((Math.random() * 50)) + 20
-          setTimeout(function(){levelSelect(0, randomTime)}, timeTest)
+          setTimeout(function(){levelSelect(0, randomTime)}, raceTime)
 
-          timeTest += 500
+          raceTime += 500
           let randomTime2 = Math.floor((Math.random() * 50)) + 20
-          setTimeout(function(){levelSelect(1, randomTime2)}, timeTest)
+          setTimeout(function(){levelSelect(1, randomTime2)}, raceTime)
 
-          timeTest += 500
+          raceTime += 500
           let randomTime3 = Math.floor((Math.random() * 50)) + 20
-          setTimeout(function(){levelSelect(2, randomTime3)}, timeTest)
+          setTimeout(function(){levelSelect(2, randomTime3)}, raceTime)
 
-          timeTest += 2000 
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[2]})}, timeTest)
+          raceTime += 2000 
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[2]})}, raceTime)
 
           let newRandomTime = 0
           if(randomTime > randomTime2 && randomTime > randomTime3) newRandomTime = randomTime * 150
           else if(randomTime2 > randomTime && randomTime2 > randomTime3) newRandomTime = randomTime2 * 150
           else newRandomTime = randomTime3 * 150
 
-          timeTest += newRandomTime - 2000
+          raceTime += newRandomTime - 2000
           setTimeout(function(){
             data.styles.iStyle = {height: "438px", opacity: 1}
             io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[3]})
             io.in(`room${id}`).emit(id, data)
-          }, timeTest)
+          }, raceTime)
           
           //two seconds for breath
-          timeTest += 2000
+          raceTime += 2000
           setTimeout(function(){     
-            data.styles.tStyle = {height: "100px", opacity: 1}
+            data.styles.tStyle = {height: "60px", opacity: 1}
             io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[4]})
             io.in(`room${id}`).emit(id, data)   
-          }, timeTest)
+          }, raceTime)
 
-          timeTest += 2000
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[5]})}, timeTest)
+          raceTime += 2000
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[5]})}, raceTime)
 
-          timeTest += 5000
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[6]})}, timeTest)
+          raceTime += 5000
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[6]})}, raceTime)
 
-          timeTest += 2000
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: "3"})}, timeTest)
+          raceTime += 2000
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: "3"})}, raceTime)
 
-          timeTest +=1000
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: "2"})}, timeTest)
+          raceTime +=1000
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: "2"})}, raceTime)
 
-          timeTest += 1000
-          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: "1"})}, timeTest)
+          raceTime += 1000
+          setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: "1"})}, raceTime)
 
-          timeTest += 1000
+          raceTime += 1000
           setTimeout(function(){
             data.started = new moment()
             updateRace(id, {started: data.started}).catch(err => console.log(err))
-            io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[7]})   
+            io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[7]}) 
+            sendRaceUpdate()  
             io.in(`room${id}`).emit(id, data)      
-          }, timeTest)
+          }, raceTime)
+            
+          raceTime += data.time
+          setTimeout(function(){raceDone(id)}, raceTime)
+
         }
 
         //Ready Check ----------------------------------------------------------
@@ -136,14 +148,24 @@ exports = module.exports = function(io) {
         socket.emit(id, data)
       })
 
-      socket.on('race created', function(data){socket.broadcast.emit('get races', data)})
+      sendRaceUpdate =()=>{
+        getRaces().then(res => { 
+          socket.broadcast.emit('getRaces', res.data.results)
+          socket.emit('getRaces', res.data.results)  
+        }
+        ).catch(err => console.log(err));      
+      }
+      socket.on('raceCreated', sendRaceUpdate)
       socket.on('sendChat', function(data, id){io.in(`room${id}`).emit(`chat${id}`, data)})
-      socket.on('joinRoom', function(id){socket.join(`room${id}`), console.log("joined")})
-      socket.on('leaveRoom', function(id){socket.leave(`room${id}`), console.log("left")})  
+      socket.on('joinRoom', function(id){socket.join(`room${id}`)})
+      socket.on('leaveRoom', function(id){socket.leave(`room${id}`)})  
       socket.on('leaderboard', function(data, id){
         updateRace(id, {leaderboard: data.leaderboard}).catch(err => console.log(err))
         io.in(`room${id}`).emit(id, data)
+        sendRaceUpdate()
       })
+
+      socket.on('overlay', function(data, id){socket.broadcast.emit(id, data)})
   });
 }
 
