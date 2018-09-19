@@ -3,7 +3,7 @@ const app = express();
 const moment = require("moment");
 const axios = require("axios");
 
-function updateRace(id, info){ return axios.put("https://kalimbril.herokuapp.com/api/races" + id, info) }
+function updateRace(id, info){ return axios.put("https://kalimbril.herokuapp.com/api/races/" + id, info) }
 function getRaces(){return axios.get("https://kalimbril.herokuapp.com/api/races")}
 
 exports = module.exports = function(io) {  
