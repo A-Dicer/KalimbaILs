@@ -5,7 +5,7 @@ import "./raceContainer.css";
 import { isNullOrUndefined } from "util";
 
 const Fade = ({ children, ...props }) => (
-  <CSSTransition appear={true} {...props} timeout={2000} classNames="fade">
+  <CSSTransition appear={true} {...props} timeout={1000} classNames="fade">
     {children}
   </CSSTransition>
 );
