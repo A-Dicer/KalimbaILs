@@ -18,13 +18,13 @@ class Overlay extends Component {
             if(this.data)this.setState({kaliTitle: {opacity: 0}, data: data})
             else this.setState({kaliTitle: {opacity: 1}, data: data})
             if(this.state.data.race){
-                console.log(this.state.data)
+             
                 if(this.state.data.race.started && !this.state.goTime){
-                    console.log("timer")
+               
                     this.setState({goTime: true})
                     this.interval = setInterval(() => this.tick(), 100)
                 }  
-            } else clearInterval(this.interval)
+            } else {clearInterval(this.interval); this.setState({goTime: false})}
         })   
     }
 
