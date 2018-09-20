@@ -150,8 +150,8 @@ exports = module.exports = function(io) {
 
       sendRaceUpdate =()=>{
         getRaces().then(res => { 
-          socket.broadcast.emit('getRaces', res.data.results.reverse())
-          socket.emit('getRaces', res.data.results.reverse())  
+          socket.broadcast.emit('getRaces', res.data.results)
+          socket.emit('getRaces', res.data.results)  
         }
         ).catch(err => console.log(err));      
       }
