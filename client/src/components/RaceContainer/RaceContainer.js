@@ -22,7 +22,7 @@ const RaceContainer = (props) =>
     </div>  
     <div className="col-12">
       <TransitionGroup className="row raceBtns">
-      { props.races.map((item, i) => (
+      { props.races.reverse().map((item, i) => (
         <Fade key={item._id} >
     
           <div className="col-12 raceBtn" >
