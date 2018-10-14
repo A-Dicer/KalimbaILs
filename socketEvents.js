@@ -43,7 +43,7 @@ exports = module.exports = function(io) {
               io.in(`room${id}`).emit(id, data)  
           }, time);
         
-          time += 500
+          time += 300
           }
         }
 
@@ -87,9 +87,9 @@ exports = module.exports = function(io) {
           setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[2]})}, raceTime)
 
           let newRandomTime = 0
-          if(randomTime > randomTime2 && randomTime > randomTime3) newRandomTime = randomTime * 500
-          else if(randomTime2 > randomTime && randomTime2 > randomTime3) newRandomTime = randomTime2 * 500
-          else newRandomTime = randomTime3 * 500
+          if(randomTime > randomTime2 && randomTime > randomTime3) newRandomTime = randomTime * 300
+          else if(randomTime2 > randomTime && randomTime2 > randomTime3) newRandomTime = randomTime2 * 300
+          else newRandomTime = randomTime3 * 300
 
           raceTime += newRandomTime - 2000
           setTimeout(function(){
