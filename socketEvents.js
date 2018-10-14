@@ -43,7 +43,7 @@ exports = module.exports = function(io) {
               io.in(`room${id}`).emit(id, data)  
           }, time);
         
-          time += 150
+          time += 500
           }
         }
 
