@@ -72,24 +72,24 @@ exports = module.exports = function(io) {
           }, raceTime)
 
           raceTime += 2000
-          let randomTime = Math.floor((Math.random() * 50)) + 20
+          let randomTime = Math.floor((Math.random() * 20)) + 20
           setTimeout(function(){levelSelect(0, randomTime)}, raceTime)
 
           raceTime += 500
-          let randomTime2 = Math.floor((Math.random() * 50)) + 20
+          let randomTime2 = Math.floor((Math.random() * 20)) + 20
           setTimeout(function(){levelSelect(1, randomTime2)}, raceTime)
 
           raceTime += 500
-          let randomTime3 = Math.floor((Math.random() * 50)) + 20
+          let randomTime3 = Math.floor((Math.random() * 20)) + 20
           setTimeout(function(){levelSelect(2, randomTime3)}, raceTime)
 
           raceTime += 2000 
           setTimeout(function(){io.in(`room${id}`).emit(`chat${id}`, {player: hb, message: msg[2]})}, raceTime)
 
           let newRandomTime = 0
-          if(randomTime > randomTime2 && randomTime > randomTime3) newRandomTime = randomTime * 150
-          else if(randomTime2 > randomTime && randomTime2 > randomTime3) newRandomTime = randomTime2 * 150
-          else newRandomTime = randomTime3 * 150
+          if(randomTime > randomTime2 && randomTime > randomTime3) newRandomTime = randomTime * 500
+          else if(randomTime2 > randomTime && randomTime2 > randomTime3) newRandomTime = randomTime2 * 500
+          else newRandomTime = randomTime3 * 500
 
           raceTime += newRandomTime - 2000
           setTimeout(function(){
